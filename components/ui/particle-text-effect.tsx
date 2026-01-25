@@ -309,10 +309,10 @@ export function ParticleTextEffect({
         particle.pos.x = spawnPos.x
         particle.pos.y = spawnPos.y
 
-        particle.maxSpeed = Math.random() * 6 + 4
-        particle.maxForce = particle.maxSpeed * 0.05
+        particle.maxSpeed = Math.random() * 3 + 2
+        particle.maxForce = particle.maxSpeed * 0.03
         particle.particleSize = Math.random() * 6 + 6
-        particle.colorBlendRate = Math.random() * 0.0275 + 0.0025
+        particle.colorBlendRate = Math.random() * 0.015 + 0.001
 
         particles.push(particle)
       }
@@ -388,7 +388,7 @@ export function ParticleTextEffect({
 
     // Auto-advance words
     frameCountRef.current++
-    if (frameCountRef.current % 240 === 0) {
+    if (frameCountRef.current % 480 === 0) {
       wordIndexRef.current = (wordIndexRef.current + 1) % words.length
       nextWord(words[wordIndexRef.current], canvas)
     }
