@@ -3,12 +3,15 @@
 import { useRef } from "react";
 import { ArrowRight, Github, Linkedin, Mail, Terminal } from "lucide-react";
 import { ParticleTextEffect } from "@/components/ui/particle-text-effect";
+import { GLBModelViewer } from "@/components/ui/glb-model-viewer";
+import { Spotlight } from "@/components/ui/spotlight";
 
 const ROLES = [
   "Software Engineer",
   "Full Stack Developer",
   "Blockchain Enthusiast",
-  "AI Engineer",
+  "Creative Technologist",
+  "AI Enthusiast",
 ] as const;
 
 const HeroSection = () => {
@@ -16,6 +19,8 @@ const HeroSection = () => {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center relative overflow-hidden font-sans">
+      <Spotlight className="z-20" />
+      
       {/* Fullscreen transparent particle canvas; text forms at role slot */}
       <ParticleTextEffect
         words={ROLES}
@@ -55,7 +60,7 @@ const HeroSection = () => {
             Available for hire
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
             Hi, I&apos;m <br />
             <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-600">
               Aryan Singh
@@ -64,20 +69,20 @@ const HeroSection = () => {
 
           {/* Particle Role Text (replaces typewriter) */}
           <div className="space-y-2">
-            <p className="text-2xl md:text-3xl font-mono text-gray-400">&gt; I am a</p>
+            <p className="text-xl md:text-2xl font-mono text-gray-400">&gt; I am a</p>
             {/* Anchor spans from left text alignment to 3D model edge */}
             <div ref={roleAnchorRef} className="h-20 w-full" />
           </div>
 
-          <p className="text-gray-400 max-w-lg text-lg leading-relaxed">
+          <p className="text-gray-400 max-w-lg text-base leading-relaxed">
             Specializing in scalable web apps, blockchain integration, and AI solutions.
           </p>
 
           <div className="flex flex-wrap gap-4 pt-4">
-            <button className="px-8 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-lg transition-all flex items-center gap-2">
+            <button className="px-7 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold rounded-lg transition-all flex items-center gap-2 text-sm md:text-base">
               View Projects <ArrowRight size={18} />
             </button>
-            <button className="px-8 py-3 border border-gray-700 hover:border-cyan-500 text-gray-300 hover:text-cyan-500 rounded-lg transition-all">
+            <button className="px-7 py-2.5 border border-gray-700 hover:border-cyan-500 text-gray-300 hover:text-cyan-500 rounded-lg transition-all text-sm md:text-base">
               Contact Me
             </button>
           </div>
@@ -111,27 +116,31 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* RIGHT SIDE: 3D Model Placeholder */}
-        <div className="relative h-[500px] w-full flex items-center justify-center perspective-[1000px] group">
-          {/* This represents where your Spline/Three.js canvas goes */}
-          <div className="relative w-full h-full transition-transform duration-200 ease-out transform group-hover:scale-105">
-            {/* Simulation of the 3D Robot Image provided */}
-            <div className="absolute inset-0 bg-linear-to-br from-gray-800/20 to-gray-900/20 rounded-2xl border border-gray-800 backdrop-blur-sm flex items-center justify-center overflow-hidden">
-              {/* Abstract 3D shape representation */}
-              <div className="relative w-64 h-64">
-                <div className="absolute inset-0 bg-linear-to-tr from-gray-200 to-gray-500 rounded-full blur-sm opacity-20 animate-pulse" />
-                {/* Replace this div with your <Spline /> component */}
-                <div className="w-full h-full bg-black/50 rounded-lg flex items-center justify-center border border-cyan-500/20 shadow-[0_0_50px_rgba(6,182,212,0.1)]">
-                  <span className="text-cyan-500 font-mono text-center px-4">
-                    [ 3D Model / Spline Scene Here ]
-                    <br />
-                    <span className="text-xs text-gray-500">Moves with Cursor</span>
-                  </span>
-                </div>
-              </div>
-
-              {/* Particle accents mimicking the reference image */}
-              <div className="absolute right-10 top-10 text-cyan-500 opacity-20 font-mono text-xs">
+        {/* RIGHT SIDE: 3D Model */}
+        <div className="relative h-100 w-full flex items-center justify-center perspective-[1000px] group">
+          <Spotlight size={300} className="from-cyan-400/30 via-cyan-500/20 to-transparent" />
+          
+          <div className="relative w-full h-full">
+            {/* Gradient border container */}
+            <div className="absolute inset-0 bg-linear-to-br from-gray-800/20 to-gray-900/20 rounded-2xl border border-gray-800 backdrop-blur-sm overflow-hidden">
+              {/* 3D Model Viewer */}
+              <GLBModelViewer
+                modelPath="/models/aryan.glb"
+                animationsPath="/models/animations.glb"
+                className="w-full h-full"
+                scale={2.2}
+                position={[0, -3.4, 0]}
+                cameraPosition={[0, 0.5, 3]}
+                cameraFov={35}
+                autoRotate={false}
+                enableOrbitControls={true}
+                enableMouseLight={true}
+                enableHeadTracking={true}
+                headBoneName="Neck"
+              />
+              
+              {/* Binary accent overlay */}
+              <div className="absolute right-6 top-6 text-cyan-500 opacity-20 font-mono text-xs pointer-events-none">
                 01001000
                 <br />
                 01000101
