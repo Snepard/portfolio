@@ -1,16 +1,18 @@
 "use client";
 
 import { useRef } from "react";
-import { ArrowRight, Github, Linkedin, Mail, Terminal } from "lucide-react";
+import { Download, Github, Linkedin, Mail, ExternalLink } from "lucide-react";
 import { ParticleTextEffect } from "@/components/ui/particle-text-effect";
 import { GLBModelViewer } from "@/components/ui/glb-model-viewer";
 import { Spotlight } from "@/components/ui/spotlight";
 import RotatingBorder from "@/components/ui/rotating-border";
+import GradientText from "@/components/GradientText";
 
 const ROLES = [
   "Software Engineer",
   "Full Stack Developer",
-  "Blockchain Enthusiast",
+  "Frontend Engineer",
+  "Blockchain Developer",
   "Creative Technologist",
   "AI Enthusiast",
 ] as const;
@@ -66,59 +68,66 @@ const HeroSection = () => {
 
       <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
         {/* LEFT SIDE: Text Content */}
-        <div className="space-y-6">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-            Hi, I&apos;m <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-600">
-              Aryan Singh
-            </span>
-          </h1>
-
-          {/* Particle Role Text (replaces typewriter) */}
-          <div className="space-y-2">
-            <p className="text-xl md:text-2xl font-mono text-gray-400">&gt; I am a</p>
-            {/* Anchor spans from left text alignment to 3D model edge */}
-            <div ref={roleAnchorRef} className="h-20 w-full" />
+        <div className="space-y-8">
+          <div className="space-y-0">
+            <p className="text-2xl text-gray-300 font-light">Hey, I&apos;m</p>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight" style={{ fontFamily: "var(--font-arkhip), sans-serif" }}>
+              <GradientText
+                colors={["#BFDBFE",  "#93C5FD", "#60A5FA", "#4F8EF7", "#3B82F6", "#4F8EF7", "#60A5FA", "#93C5FD"]}
+                animationSpeed={3}
+                showBorder={false}
+                className=""
+              >
+                Aryan Singh
+              </GradientText>
+            </h1>
           </div>
 
-          <p className="text-gray-400 max-w-lg text-base leading-relaxed">
-            Specializing in scalable web apps, blockchain integration, and AI solutions.
+          {/* Particle Role Text */}
+          <div className="space-y-3">
+            <p className="text-lg md:text-xl font-mono text-gray-500">
+              <span className="text-cyan-500">const</span> role <span className="text-pink-400">=</span>
+            </p>
+            <div ref={roleAnchorRef} className="h-16 w-full" />
+          </div>
+
+          <p className="text-gray-400 max-w-md text-lg leading-relaxed font-light">
+            Crafting scalable solutions at the intersection of 
+            <span className="text-cyan-400"> innovation</span> and 
+            <span className="text-purple-400"> technology</span>.
           </p>
 
-          <div className="flex flex-wrap gap-4 pt-4">
-            <button className="px-7 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold rounded-lg transition-all flex items-center gap-2 text-sm md:text-base">
-              View Projects <ArrowRight size={18} />
-            </button>
-            <button className="px-7 py-2.5 border border-gray-700 hover:border-cyan-500 text-gray-300 hover:text-cyan-500 rounded-lg transition-all text-sm md:text-base">
-              Contact Me
-            </button>
+          {/* Download Resume Button */}
+          <div className="pt-2">
+            <a 
+              href="/resume.pdf" 
+              download
+              className="group relative inline-flex items-center gap-3 px-6 py-3 rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 text-white font-semibold text-sm overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25 hover:scale-[1.02]"
+            >
+              <span className="absolute inset-0 bg-linear-to-r from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <Download size={18} className="relative z-10" />
+              <span className="relative z-10">Download Resume</span>
+              <span className="relative z-10 text-cyan-200 text-xs font-normal">PDF</span>
+            </a>
           </div>
 
-          {/* Social Icons */}
-          <div className="flex gap-6 pt-8 text-gray-500">
-            <div className="relative group">
-              <Github className="hover:text-white cursor-pointer transition-colors" aria-label="GitHub" />
-              <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-black/80 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
-                GitHub
-              </span>
-            </div>
-            <div className="relative group">
-              <Linkedin className="hover:text-white cursor-pointer transition-colors" aria-label="LinkedIn" />
-              <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-black/80 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
-                LinkedIn
-              </span>
-            </div>
-            <div className="relative group">
-              <Mail className="hover:text-white cursor-pointer transition-colors" aria-label="Email" />
-              <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-black/80 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
-                Email
-              </span>
-            </div>
-            <div className="relative group">
-              <Terminal className="hover:text-white cursor-pointer transition-colors" aria-label="Terminal" />
-              <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-black/80 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
-                Terminal
-              </span>
+          {/* Social Links */}
+          <div className="flex items-center gap-4 pt-6">
+            <span className="text-xs text-gray-600 uppercase tracking-widest">Connect</span>
+            <div className="h-px w-8 bg-gray-700" />
+            <div className="flex gap-3">
+              <a href="#" className="group p-2.5 rounded-lg bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-cyan-500/10 transition-all duration-300">
+                <Github size={18} className="text-gray-400 group-hover:text-cyan-400 transition-colors" />
+              </a>
+              <a href="#" className="group p-2.5 rounded-lg bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-cyan-500/10 transition-all duration-300">
+                <Linkedin size={18} className="text-gray-400 group-hover:text-cyan-400 transition-colors" />
+              </a>
+              <a href="#" className="group p-2.5 rounded-lg bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-cyan-500/10 transition-all duration-300">
+                <Mail size={18} className="text-gray-400 group-hover:text-cyan-400 transition-colors" />
+              </a>
+              <a href="#" className="group p-2.5 rounded-lg bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-cyan-500/10 transition-all duration-300">
+                <ExternalLink size={18} className="text-gray-400 group-hover:text-cyan-400 transition-colors" />
+              </a>
             </div>
           </div>
         </div>
@@ -134,8 +143,8 @@ const HeroSection = () => {
             <Spotlight size={300} className="from-cyan-400/30 via-cyan-500/20 to-transparent" />
             
             <div className="relative w-full h-full">
-              {/* Inner container with glass effect */}
-              <div className="absolute inset-0 bg-black/20 rounded-xl backdrop-blur-sm overflow-hidden shadow-2xl shadow-cyan-500/10 border border-white/10 before:absolute before:inset-0 before:bg-linear-to-br before:from-white/5 before:via-transparent before:to-transparent before:pointer-events-none">
+              {/* Inner container with translucent glass effect */}
+              <div className="absolute inset-0 bg-gray-900/60 rounded-xl backdrop-blur-md overflow-hidden shadow-2xl shadow-cyan-500/10 border border-white/10 before:absolute before:inset-0 before:bg-linear-to-br before:from-white/5 before:via-transparent before:to-transparent before:pointer-events-none">
                 
                 {/* Subtle grid pattern overlay */}
                 <div className="absolute inset-0 opacity-5 pointer-events-none"

@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const arkhip = localFont({
+  src: "../public/fonts/Arkhip_font.woff",
+  variable: "--font-arkhip",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -25,7 +32,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${spaceGrotesk.variable} ${geistMono.variable} ${arkhip.variable} antialiased font-sans`}
+        style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
       >
         {children}
       </body>
