@@ -5,6 +5,7 @@ import { ArrowRight, Github, Linkedin, Mail, Terminal } from "lucide-react";
 import { ParticleTextEffect } from "@/components/ui/particle-text-effect";
 import { GLBModelViewer } from "@/components/ui/glb-model-viewer";
 import { Spotlight } from "@/components/ui/spotlight";
+import RotatingBorder from "@/components/ui/rotating-border";
 
 const ROLES = [
   "Software Engineer",
@@ -42,24 +43,30 @@ const HeroSection = () => {
         ]}
       />
 
-      {/* Background Elements (Optional Particle vibe) */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob" />
-        <div className="absolute top-20 right-20 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000" />
+      {/* Background Accent Spots */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Blue spot - top left */}
+        <div className="absolute -top-20 -left-20 w-96 h-96 bg-blue-600/30 rounded-full blur-[120px]" />
+        
+        {/* Pink spot - top right */}
+        <div className="absolute -top-10 right-1/4 w-80 h-80 bg-pink-500/25 rounded-full blur-[100px]" />
+        
+        {/* Purple spot - center right */}
+        <div className="absolute top-1/3 -right-20 w-96 h-96 bg-purple-600/30 rounded-full blur-[120px]" />
+        
+        {/* Blue spot - bottom left */}
+        <div className="absolute bottom-1/4 -left-10 w-72 h-72 bg-blue-500/25 rounded-full blur-[100px]" />
+        
+        {/* Pink spot - bottom center */}
+        <div className="absolute -bottom-20 left-1/3 w-80 h-80 bg-pink-600/20 rounded-full blur-[120px]" />
+        
+        {/* Purple spot - bottom right */}
+        <div className="absolute bottom-10 right-10 w-64 h-64 bg-purple-500/25 rounded-full blur-[80px]" />
       </div>
 
       <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
         {/* LEFT SIDE: Text Content */}
         <div className="space-y-6">
-          {/* Small badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-900/30 border border-cyan-500/30 text-cyan-400 text-sm font-mono">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500" />
-            </span>
-            Available for hire
-          </div>
-
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
             Hi, I&apos;m <br />
             <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-600">
@@ -117,39 +124,75 @@ const HeroSection = () => {
         </div>
 
         {/* RIGHT SIDE: 3D Model */}
-        <div className="relative h-100 w-full flex items-center justify-center perspective-[1000px] group">
-          <Spotlight size={300} className="from-cyan-400/30 via-cyan-500/20 to-transparent" />
-          
-          <div className="relative w-full h-full">
-            {/* Gradient border container */}
-            <div className="absolute inset-0 bg-linear-to-br from-gray-800/20 to-gray-900/20 rounded-2xl border border-gray-800 backdrop-blur-sm overflow-hidden">
-              {/* 3D Model Viewer */}
-              <GLBModelViewer
-                modelPath="/models/aryan.glb"
-                animationsPath="/models/animations.glb"
-                className="w-full h-full"
-                scale={2.2}
-                position={[0, -3.4, 0]}
-                cameraPosition={[0, 0.5, 3]}
-                cameraFov={35}
-                autoRotate={false}
-                enableOrbitControls={true}
-                enableMouseLight={true}
-                enableHeadTracking={true}
-                headBoneName="Neck"
-              />
-              
-              {/* Binary accent overlay */}
-              <div className="absolute right-6 top-6 text-cyan-500 opacity-20 font-mono text-xs pointer-events-none">
-                01001000
-                <br />
-                01000101
-                <br />
-                01001100
+        <RotatingBorder
+          duration={5}
+          thickness={2}
+          borderRadius={15}
+          className="h-100 w-full"
+        >
+          <div id="RD" className="relative h-full w-full flex items-center justify-center perspective-[1000px] group">
+            <Spotlight size={300} className="from-cyan-400/30 via-cyan-500/20 to-transparent" />
+            
+            <div className="relative w-full h-full">
+              {/* Inner container with glass effect */}
+              <div className="absolute inset-0 bg-black/20 rounded-xl backdrop-blur-sm overflow-hidden shadow-2xl shadow-cyan-500/10 border border-white/10 before:absolute before:inset-0 before:bg-linear-to-br before:from-white/5 before:via-transparent before:to-transparent before:pointer-events-none">
+                
+                {/* Subtle grid pattern overlay */}
+                <div className="absolute inset-0 opacity-5 pointer-events-none"
+                  style={{
+                    backgroundImage: `linear-gradient(rgba(6,182,212,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.3) 1px, transparent 1px)`,
+                    backgroundSize: '40px 40px'
+                  }}
+                />
+                
+                {/* Top-left decorative corner */}
+                <div className="absolute top-4 left-4 flex items-center gap-2 pointer-events-none">
+                  <div className="w-2 h-2 rounded-full bg-cyan-500/60 animate-pulse" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500/40" />
+                  <div className="w-1 h-1 rounded-full bg-cyan-400/30" />
+                </div>
+                
+                {/* Bottom decorative bar */}
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-cyan-500/30 to-transparent" />
+                
+                {/* Side accent line */}
+                <div className="absolute top-8 bottom-8 left-0 w-px bg-linear-to-b from-transparent via-cyan-500/20 to-transparent" />
+                
+                {/* 3D Model Viewer */}
+                <GLBModelViewer
+                  modelPath="/models/aryan.glb"
+                  className="w-full h-full"
+                  scale={2.2}
+                  position={[0, -3.4, 0]}
+                  cameraPosition={[0, 0.5, 3]}
+                  cameraFov={35}
+                  autoRotate={false}
+                  enableOrbitControls={true}
+                  enableMouseLight={true}
+                  enableHeadTracking={true}
+                  headBoneName="Neck"
+                />
+                
+                {/* Binary accent overlay - enhanced */}
+                <div className="absolute right-5 top-5 text-cyan-500/30 font-mono text-[10px] pointer-events-none text-right leading-relaxed tracking-wider">
+                  <span className="text-cyan-400/40">&#47;&#47;</span> 00101
+                  <br />
+                  <span className="text-cyan-400/40">&#47;&#47;</span> 00000011
+                  <br />
+                  <span className="text-cyan-400/40">&#47;&#47;</span> 11111010110
+                </div>
+                
+                {/* Bottom-left status indicator */}
+                <div className="absolute bottom-4 left-4 flex items-center gap-2 pointer-events-none">
+                  <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                    <span className="text-[9px] font-mono text-cyan-400/60 uppercase tracking-wider">Live</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </RotatingBorder>
       </div>
     </div>
   );
