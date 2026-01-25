@@ -41,6 +41,7 @@ function Model({
   
   // Global mouse tracking for full-screen effect
   const mousePosition = useRef({ x: 0, y: 0 })
+  const isMouseInWindow = useRef(true)
   
   useEffect(() => {
     if (!enableHeadTracking) return
@@ -49,10 +50,25 @@ function Model({
       // Normalize X/Y to -1 to 1 based on window size
       mousePosition.current.x = (event.clientX / window.innerWidth) * 2 - 1
       mousePosition.current.y = -(event.clientY / window.innerHeight) * 2 + 1
+      isMouseInWindow.current = true
+    }
+
+    const handleMouseLeave = () => {
+      isMouseInWindow.current = false
+    }
+
+    const handleMouseEnter = () => {
+      isMouseInWindow.current = true
     }
 
     window.addEventListener("mousemove", handleMouseMove)
-    return () => window.removeEventListener("mousemove", handleMouseMove)
+    document.addEventListener("mouseleave", handleMouseLeave)
+    document.addEventListener("mouseenter", handleMouseEnter)
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove)
+      document.removeEventListener("mouseleave", handleMouseLeave)
+      document.removeEventListener("mouseenter", handleMouseEnter)
+    }
   }, [enableHeadTracking])
 
   useEffect(() => {
@@ -84,20 +100,27 @@ function Model({
     }
 
     if (enableHeadTracking && headBoneRef.current) {
-      // Get mouse position (-1 to 1) from global window listener
-      const mouseX = mousePosition.current.x
-      const mouseY = mousePosition.current.y
+      let targetRotationX = 0
+      let targetRotationY = 0
 
-      // Target rotation (adjust sensitivity as needed)
-      // Standard rigs often rotate head around Y for left/right and X for up/down
-      // Note: Bones local axes might differ. Assuming standard orientation here.
-      
-      const targetRotationY = mouseX * 5 // Look left/right
-      const targetRotationX = -mouseY * 5 // Look up/down
+      if (isMouseInWindow.current) {
+        // Get mouse position (-1 to 1) from global window listener
+        const mouseX = mousePosition.current.x
+        const mouseY = mousePosition.current.y
+
+        // Target rotation (adjust sensitivity as needed)
+        // Standard rigs often rotate head around Y for left/right and X for up/down
+        // Note: Bones local axes might differ. Assuming standard orientation here.
+        
+        targetRotationY = mouseX * 5 // Look left/right
+        targetRotationX = -mouseY * 5 // Look up/down
+      }
+      // When mouse is out of window, targetRotation stays at 0,0 (neutral position)
 
       // Smoothly interpolate current rotation to target
-      headBoneRef.current.rotation.y = THREE.MathUtils.lerp(headBoneRef.current.rotation.y, targetRotationY, 0.08)
-      headBoneRef.current.rotation.x = THREE.MathUtils.lerp(headBoneRef.current.rotation.x, targetRotationX, 0.08)
+      const lerpFactor = isMouseInWindow.current ? 0.08 : 0.03 // Slower transition when returning to neutral
+      headBoneRef.current.rotation.y = THREE.MathUtils.lerp(headBoneRef.current.rotation.y, targetRotationY, lerpFactor)
+      headBoneRef.current.rotation.x = THREE.MathUtils.lerp(headBoneRef.current.rotation.x, targetRotationX, lerpFactor)
     }
   })
 
