@@ -140,76 +140,88 @@ const HeroSection = () => {
           className="h-100 w-full"
         >
           <div id="RD" className="relative h-full w-full flex items-center justify-center perspective-[1000px] group">
-            <Spotlight size={300} className="from-cyan-400/30 via-cyan-500/20 to-transparent" />
+            <Spotlight size={350} className="from-cyan-400/40 via-cyan-500/25 to-transparent" />
             
             <div className="relative w-full h-full">
               {/* Inner container with translucent glass effect */}
-              <div className="absolute inset-0 bg-linear-to-br from-gray-900/80 via-gray-900/60 to-slate-900/70 rounded-xl backdrop-blur-xl overflow-hidden shadow-2xl shadow-cyan-500/20 border border-cyan-500/20 before:absolute before:inset-0 before:bg-linear-to-br before:from-white/10 before:via-transparent before:to-cyan-500/5 before:pointer-events-none">
-                
-                {/* Animated scanning line */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                  <div className="absolute w-full h-0.5 bg-linear-to-r from-transparent via-cyan-400/40 to-transparent" 
-                    style={{
-                      animation: 'scan 4s ease-in-out infinite',
-                    }}
-                  />
-                </div>
+              <div className="absolute inset-0 bg-linear-to-br from-slate-900/90 via-gray-900/70 to-slate-950/80 rounded-xl backdrop-blur-2xl overflow-hidden shadow-2xl shadow-cyan-500/25 border border-cyan-400/25 before:absolute before:inset-0 before:bg-linear-to-br before:from-white/8 before:via-transparent before:to-cyan-500/3 before:pointer-events-none">
                 
                 {/* Holographic grid overlay */}
-                <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                <div className="absolute inset-0 opacity-[0.04] pointer-events-none"
                   style={{
                     backgroundImage: `
-                      linear-gradient(rgba(6,182,212,0.5) 1px, transparent 1px), 
-                      linear-gradient(90deg, rgba(6,182,212,0.5) 1px, transparent 1px),
-                      radial-gradient(ellipse at center, rgba(6,182,212,0.1) 0%, transparent 70%)
+                      linear-gradient(rgba(6,182,212,0.6) 1px, transparent 1px), 
+                      linear-gradient(90deg, rgba(6,182,212,0.6) 1px, transparent 1px),
+                      radial-gradient(ellipse at center, rgba(6,182,212,0.15) 0%, transparent 60%)
                     `,
-                    backgroundSize: '30px 30px, 30px 30px, 100% 100%'
+                    backgroundSize: '25px 25px, 25px 25px, 100% 100%'
                   }}
                 />
                 
-                {/* Corner brackets - top left */}
+                {/* Animated corner brackets - top left */}
                 <div className="absolute top-3 left-3 pointer-events-none">
-                  <div className="w-6 h-6 border-l-2 border-t-2 border-cyan-500/40 rounded-tl-sm" />
+                  <div className="w-8 h-8 border-l-2 border-t-2 border-cyan-400/50 rounded-tl transition-all duration-300 group-hover:border-cyan-400/70 group-hover:w-10 group-hover:h-10" />
+                  <div className="absolute top-1 left-1 w-1.5 h-1.5 bg-cyan-400/40 rounded-full animate-pulse" />
                 </div>
                 
-                {/* Corner brackets - top right */}
+                {/* Animated corner brackets - top right */}
                 <div className="absolute top-3 right-3 pointer-events-none">
-                  <div className="w-6 h-6 border-r-2 border-t-2 border-cyan-500/40 rounded-tr-sm" />
+                  <div className="w-8 h-8 border-r-2 border-t-2 border-cyan-400/50 rounded-tr transition-all duration-300 group-hover:border-cyan-400/70 group-hover:w-10 group-hover:h-10" />
+                  <div className="absolute top-1 right-1 w-1.5 h-1.5 bg-cyan-400/40 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
                 </div>
                 
-                {/* Corner brackets - bottom left */}
+                {/* Animated corner brackets - bottom left */}
                 <div className="absolute bottom-3 left-3 pointer-events-none">
-                  <div className="w-6 h-6 border-l-2 border-b-2 border-cyan-500/40 rounded-bl-sm" />
+                  <div className="w-8 h-8 border-l-2 border-b-2 border-cyan-400/50 rounded-bl transition-all duration-300 group-hover:border-cyan-400/70 group-hover:w-10 group-hover:h-10" />
+                  <div className="absolute bottom-1 left-1 w-1.5 h-1.5 bg-cyan-400/40 rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
                 </div>
                 
-                {/* Corner brackets - bottom right */}
+                {/* Animated corner brackets - bottom right */}
                 <div className="absolute bottom-3 right-3 pointer-events-none">
-                  <div className="w-6 h-6 border-r-2 border-b-2 border-cyan-500/40 rounded-br-sm" />
+                  <div className="w-8 h-8 border-r-2 border-b-2 border-cyan-400/50 rounded-br transition-all duration-300 group-hover:border-cyan-400/70 group-hover:w-10 group-hover:h-10" />
+                  <div className="absolute bottom-1 right-1 w-1.5 h-1.5 bg-cyan-400/40 rounded-full animate-pulse" style={{ animationDelay: '1.5s' }} />
                 </div>
                 
                 {/* Top-left decorative HUD element */}
-                <div className="absolute top-5 left-5 flex flex-col gap-1.5 pointer-events-none">
+                <div className="absolute top-6 left-6 flex flex-col gap-2 pointer-events-none">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1">
-                      <div className="w-2.5 h-2.5 rotate-45 bg-cyan-500/60 animate-pulse" />
-                      <div className="w-10 h-0.5 bg-linear-to-r from-cyan-500/60 to-transparent" />
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rotate-45 bg-cyan-400/70 animate-pulse shadow-lg shadow-cyan-500/30" />
+                      <div className="w-12 h-0.5 bg-linear-to-r from-cyan-400/70 to-transparent" />
                     </div>
-                    <span className="text-[10px] font-mono text-cyan-500/40 tracking-[0.2em] uppercase">Model.v1</span>
+                    <span className="text-[11px] font-mono text-cyan-400/50 tracking-[0.25em] uppercase font-medium">Model.v1</span>
                   </div>
-                  <div className="ml-7 text-[11px] font-mono text-cyan-500/30 leading-relaxed tracking-wider">
-                    <div>00101</div>
-                    <div>00000011</div>
-                    <div>11111010110</div>
+                  <div className="ml-8 text-[12px] font-mono text-cyan-400/35 leading-relaxed tracking-widest">
+                    <div className="flex items-center gap-2">
+                      <span className="text-cyan-500/20">&gt;</span>
+                      <span>00101</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-cyan-500/20">&gt;</span>
+                      <span>00000011</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-cyan-500/20">&gt;</span>
+                      <span>11111010110</span>
+                    </div>
                   </div>
                 </div>
                 
-                {/* Side accent lines with glow */}
-                <div className="absolute top-12 bottom-12 left-0 w-px bg-linear-to-b from-transparent via-cyan-500/30 to-transparent" />
-                <div className="absolute top-12 bottom-12 right-0 w-px bg-linear-to-b from-transparent via-cyan-500/30 to-transparent" />
+                {/* Vertical data stream - left side */}
+                <div className="absolute top-20 bottom-20 left-1.5 w-px bg-linear-to-b from-transparent via-cyan-400/40 to-transparent" />
+                <div className="absolute top-24 bottom-24 left-3 w-px bg-linear-to-b from-cyan-500/20 via-cyan-400/30 to-cyan-500/20" />
                 
-                {/* Bottom decorative bar with pulse */}
-                <div className="absolute bottom-0 left-8 right-8 h-px bg-linear-to-r from-transparent via-cyan-500/40 to-transparent" />
-                <div className="absolute top-0 left-8 right-8 h-px bg-linear-to-r from-transparent via-cyan-500/40 to-transparent" />
+                {/* Vertical data stream - right side */}
+                <div className="absolute top-20 bottom-20 right-1.5 w-px bg-linear-to-b from-transparent via-cyan-400/40 to-transparent" />
+                <div className="absolute top-24 bottom-24 right-3 w-px bg-linear-to-b from-cyan-500/20 via-cyan-400/30 to-cyan-500/20" />
+                
+                {/* Top decorative bar with animated segments */}
+                <div className="absolute top-0 left-12 right-12 h-px bg-linear-to-r from-transparent via-cyan-400/50 to-transparent" />
+                <div className="absolute top-1 left-1/4 right-1/4 h-px bg-linear-to-r from-transparent via-cyan-500/20 to-transparent" />
+                
+                {/* Bottom decorative bar with animated segments */}
+                <div className="absolute bottom-0 left-12 right-12 h-px bg-linear-to-r from-transparent via-cyan-400/50 to-transparent" />
+                <div className="absolute bottom-1 left-1/4 right-1/4 h-px bg-linear-to-r from-transparent via-cyan-500/20 to-transparent" />
                 
                 {/* 3D Model Viewer */}
                 <GLBModelViewer
@@ -226,35 +238,54 @@ const HeroSection = () => {
                   headBoneName="Neck"
                 />
                 
-                {/* Tech data overlay - right side */}
-                <div className="absolute right-5 top-12 text-cyan-500/25 font-mono text-[9px] pointer-events-none text-right leading-loose tracking-wider">
-                  <div className="flex items-center justify-end gap-2 mb-1">
-                    <span className="text-cyan-400/30">SYS</span>
-                    <div className="w-12 h-0.75 bg-gray-800 rounded-full overflow-hidden">
-                      <div className="w-3/4 h-full bg-linear-to-r from-cyan-500/60 to-cyan-400/40" />
+                {/* Tech data overlay - right side with more detail */}
+                <div className="absolute right-6 top-16 flex flex-col gap-3 pointer-events-none">
+                  <div className="text-right">
+                    <div className="flex items-center justify-end gap-2 mb-2">
+                      <span className="text-[10px] font-mono text-cyan-400/40 tracking-wider">SYS</span>
+                      <div className="w-14 h-1 bg-gray-800/80 rounded-full overflow-hidden border border-cyan-500/10">
+                        <div className="w-4/5 h-full bg-linear-to-r from-cyan-500/70 to-cyan-400/50 animate-pulse" />
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-end gap-2 mb-2">
+                      <span className="text-[10px] font-mono text-cyan-400/40 tracking-wider">MEM</span>
+                      <div className="w-14 h-1 bg-gray-800/80 rounded-full overflow-hidden border border-cyan-500/10">
+                        <div className="w-3/5 h-full bg-linear-to-r from-emerald-500/70 to-emerald-400/50" />
+                      </div>
                     </div>
                   </div>
-                  <span className="text-cyan-400/20">RENDER:OK</span>
+                  <div className="text-[9px] font-mono text-cyan-400/25 text-right leading-relaxed">
+                    <div>STATUS: <span className="text-emerald-400/50">ONLINE</span></div>
+                    <div>RENDER: <span className="text-cyan-400/40">OK</span></div>
+                  </div>
                 </div>
                 
-                {/* Bottom-left status indicator - enhanced */}
-                <div className="absolute bottom-5 left-5 flex items-center gap-3 pointer-events-none">
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-cyan-500/5 border border-cyan-500/20 backdrop-blur-sm">
+                {/* Bottom-right status indicator - enhanced */}
+                <div className="absolute bottom-6 right-6 flex items-center gap-3 pointer-events-none">
+                  <div className="flex items-center gap-2.5 px-4 py-2 rounded-lg bg-cyan-500/8 border border-cyan-400/25 backdrop-blur-md shadow-lg shadow-cyan-500/10">
                     <div className="relative">
-                      <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                      <div className="absolute inset-0 w-2 h-2 rounded-full bg-emerald-400/50 animate-ping" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-lg shadow-emerald-500/50" />
+                      <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-emerald-400/40 animate-ping" />
                     </div>
-                    <span className="text-[9px] font-mono text-cyan-400/70 uppercase tracking-widest">Active</span>
+                    <span className="text-[10px] font-mono text-cyan-300/80 uppercase tracking-[0.2em] font-medium">Active</span>
                   </div>
                 </div>
                 
-                {/* Bottom-right coordinates */}
-                <div className="absolute bottom-5 right-5 pointer-events-none">
-                  <span className="text-[8px] font-mono text-cyan-500/30 tracking-wider">[ 05 , 03 , 06 ]</span>
+                {/* Center target reticle - subtle */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+                  <div className="relative w-24 h-24">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-3 bg-cyan-400/50" />
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-px h-3 bg-cyan-400/50" />
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-px bg-cyan-400/50" />
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-px bg-cyan-400/50" />
+                  </div>
                 </div>
                 
-                {/* Subtle inner glow overlay */}
-                <div className="absolute inset-0 pointer-events-none rounded-xl shadow-[inset_0_0_60px_rgba(6,182,212,0.05)]" />
+                {/* Subtle inner glow overlay - enhanced */}
+                <div className="absolute inset-0 pointer-events-none rounded-xl shadow-[inset_0_0_80px_rgba(6,182,212,0.08),inset_0_0_30px_rgba(6,182,212,0.05)]" />
+                
+                {/* Subtle vignette effect */}
+                <div className="absolute inset-0 pointer-events-none rounded-xl bg-radial-[ellipse_at_center] from-transparent via-transparent to-black/30" />
               </div>
             </div>
           </div>
