@@ -145,6 +145,27 @@ function MouseFollowLight() {
   return <pointLight ref={lightRef} intensity={0.5} position={[0, 0, 3]} />
 }
 
+function CameraInitializer() {
+  const controls = useRef<any>(null)
+
+  useEffect(() => {
+    if (controls.current) {
+      controls.current.setAzimuthalAngle(-0.35) // rotate camera to the right
+      controls.current.update()
+    }
+  }, [])
+
+  return (
+    <OrbitControls
+      ref={controls}
+      enableZoom={false}
+      enablePan={false}
+      minPolarAngle={Math.PI / 3}
+      maxPolarAngle={Math.PI / 1.5}
+    />
+  )
+}
+
 interface GLBModelViewerProps {
   modelPath: string
   animationsPath?: string
@@ -206,14 +227,7 @@ export function GLBModelViewer({
           
           <Environment preset="city" />
           
-          {enableOrbitControls && (
-            <OrbitControls
-              enableZoom={false}
-              enablePan={false}
-              minPolarAngle={Math.PI / 3}
-              maxPolarAngle={Math.PI / 1.5}
-            />
-          )}
+          {enableOrbitControls && <CameraInitializer />}
         </Suspense>
       </Canvas>
     </div>
