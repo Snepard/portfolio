@@ -174,6 +174,7 @@ export function ParticleTextEffect({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationRef = useRef<number | null>(null)
   const particlesRef = useRef<Particle[]>([])
+  const wordTracesRef = useRef<Record<string, { width: number; height: number; points: Vector2D[] }>>({})
   const frameCountRef = useRef(0)
   const wordIndexRef = useRef(0)
   const colorIndexRef = useRef(0)
@@ -215,26 +216,36 @@ export function ParticleTextEffect({
   }
 
   const nextWord = (word: string, canvas: HTMLCanvasElement) => {
-    // Create off-screen canvas for text rendering
+    const anchorRect = fullscreen && anchorRef?.current ? anchorRef.current.getBoundingClientRect() : null
     let offsetX = 0
     let offsetY = 0
-
-    const anchorRect = fullscreen && anchorRef?.current ? anchorRef.current.getBoundingClientRect() : null
-
-    const offscreenCanvas = document.createElement("canvas")
-    const offscreenCtx = offscreenCanvas.getContext("2d")!
+    let processWidth = canvas.width
+    let processHeight = canvas.height
 
     if (anchorRect) {
       const paddedWidth = Math.max(1, Math.ceil(anchorRect.width + anchorPadding * 2))
       const paddedHeight = Math.max(1, Math.ceil(anchorRect.height + anchorPadding * 2))
-
-      offscreenCanvas.width = paddedWidth
-      offscreenCanvas.height = paddedHeight
-
+      processWidth = paddedWidth
+      processHeight = paddedHeight
       offsetX = Math.round(anchorRect.left - anchorPadding)
       offsetY = Math.round(anchorRect.top - anchorPadding)
+    }
 
-      const effectiveFontSize = Math.min(fontSize, Math.max(12, Math.floor(anchorRect.height * 0.9)))
+    let points: Vector2D[] = []
+    const cached = wordTracesRef.current[word]
+
+    if (cached && cached.width === processWidth && cached.height === processHeight) {
+      points = cached.points
+    } else {
+      const offscreenCanvas = document.createElement("canvas")
+      const offscreenCtx = offscreenCanvas.getContext("2d")!
+
+      offscreenCanvas.width = processWidth
+      offscreenCanvas.height = processHeight
+
+      const effectiveFontSize = anchorRect
+        ? Math.min(fontSize, Math.max(12, Math.floor(anchorRect.height * 0.9)))
+        : fontSize
 
       offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
       offscreenCtx.fillStyle = "white"
@@ -242,22 +253,35 @@ export function ParticleTextEffect({
       offscreenCtx.textAlign = "center"
       offscreenCtx.textBaseline = "middle"
       offscreenCtx.fillText(word, offscreenCanvas.width / 2, offscreenCanvas.height / 2)
-    } else {
-      offscreenCanvas.width = canvas.width
-      offscreenCanvas.height = canvas.height
 
-      offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height)
-      offscreenCtx.fillStyle = "white"
-      offscreenCtx.font = `bold ${fontSize}px Arial`
-      offscreenCtx.textAlign = "center"
-      offscreenCtx.textBaseline = "middle"
-      offscreenCtx.fillText(word, canvas.width / 2, canvas.height / 2)
+      const imageData = offscreenCtx.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height)
+      const pixels = imageData.data
+
+      const coordsIndexes: number[] = []
+      for (let i = 0; i < pixels.length; i += pixelSteps * 4) {
+        if (pixels[i + 3] > 0) {
+          coordsIndexes.push(i)
+        }
+      }
+
+      for (let i = coordsIndexes.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        ;[coordsIndexes[i], coordsIndexes[j]] = [coordsIndexes[j], coordsIndexes[i]]
+      }
+
+      for (const index of coordsIndexes) {
+        const x = (index / 4) % offscreenCanvas.width
+        const y = Math.floor(index / 4 / offscreenCanvas.width)
+        points.push({ x, y })
+      }
+
+      wordTracesRef.current[word] = {
+        width: processWidth,
+        height: processHeight,
+        points: points,
+      }
     }
 
-    const imageData = offscreenCtx.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height)
-    const pixels = imageData.data
-
-    // Generate new color (use provided colors or random)
     let newColor: { r: number; g: number; b: number }
     if (colors && colors.length > 0) {
       newColor = colors[colorIndexRef.current % colors.length]
@@ -273,62 +297,38 @@ export function ParticleTextEffect({
     const particles = particlesRef.current
     let particleIndex = 0
 
-    // Collect coordinates
-    const coordsIndexes: number[] = []
-    for (let i = 0; i < pixels.length; i += pixelSteps * 4) {
-      coordsIndexes.push(i)
-    }
+    for (const point of points) {
+      let particle: Particle
+      if (particleIndex < particles.length) {
+        particle = particles[particleIndex]
+        particle.isKilled = false
+        particleIndex++
+      } else {
+        particle = new Particle()
+        const spawnPos = generateSpawnPos(canvas)
+        particle.pos.x = spawnPos.x
+        particle.pos.y = spawnPos.y
 
-    // Shuffle coordinates for fluid motion
-    for (let i = coordsIndexes.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[coordsIndexes[i], coordsIndexes[j]] = [coordsIndexes[j], coordsIndexes[i]]
-    }
+        particle.maxSpeed = Math.random() * 6 + 4
+        particle.maxForce = particle.maxSpeed * 0.05
+        particle.particleSize = Math.random() * 6 + 6
+        particle.colorBlendRate = Math.random() * 0.0275 + 0.0025
 
-    for (const coordIndex of coordsIndexes) {
-      const pixelIndex = coordIndex
-      const alpha = pixels[pixelIndex + 3]
-
-      if (alpha > 0) {
-        const x = (pixelIndex / 4) % offscreenCanvas.width
-        const y = Math.floor(pixelIndex / 4 / offscreenCanvas.width)
-
-        let particle: Particle
-
-        if (particleIndex < particles.length) {
-          particle = particles[particleIndex]
-          particle.isKilled = false
-          particleIndex++
-        } else {
-          particle = new Particle()
-
-          const spawnPos = generateSpawnPos(canvas)
-          particle.pos.x = spawnPos.x
-          particle.pos.y = spawnPos.y
-
-          particle.maxSpeed = Math.random() * 6 + 4
-          particle.maxForce = particle.maxSpeed * 0.05
-          particle.particleSize = Math.random() * 6 + 6
-          particle.colorBlendRate = Math.random() * 0.0275 + 0.0025
-
-          particles.push(particle)
-        }
-
-        // Set color transition
-        particle.startColor = {
-          r: particle.startColor.r + (particle.targetColor.r - particle.startColor.r) * particle.colorWeight,
-          g: particle.startColor.g + (particle.targetColor.g - particle.startColor.g) * particle.colorWeight,
-          b: particle.startColor.b + (particle.targetColor.b - particle.startColor.b) * particle.colorWeight,
-        }
-        particle.targetColor = newColor
-        particle.colorWeight = 0
-
-        particle.target.x = x + offsetX
-        particle.target.y = y + offsetY
+        particles.push(particle)
       }
+
+      particle.startColor = {
+        r: particle.startColor.r + (particle.targetColor.r - particle.startColor.r) * particle.colorWeight,
+        g: particle.startColor.g + (particle.targetColor.g - particle.startColor.g) * particle.colorWeight,
+        b: particle.startColor.b + (particle.targetColor.b - particle.startColor.b) * particle.colorWeight,
+      }
+      particle.targetColor = newColor
+      particle.colorWeight = 0
+
+      particle.target.x = point.x + offsetX
+      particle.target.y = point.y + offsetY
     }
 
-    // Kill remaining particles
     for (let i = particleIndex; i < particles.length; i++) {
       particles[i].kill(canvas.width, canvas.height)
     }
@@ -406,6 +406,7 @@ export function ParticleTextEffect({
     }
 
     particlesRef.current = []
+    wordTracesRef.current = {}
     frameCountRef.current = 0
     wordIndexRef.current = 0
 

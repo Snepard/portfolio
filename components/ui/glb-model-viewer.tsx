@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useRef, useEffect } from 'react'
+import { Suspense, useRef, useEffect, useMemo } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useGLTF, useAnimations, OrbitControls, Environment } from '@react-three/drei'
 import * as THREE from 'three'
@@ -33,9 +33,9 @@ function Model({
   // Load separate animations file if provided
   const animationsData = animationsPath ? useGLTF(animationsPath) : null
   
-  const allAnimations = animationsPath && animationsData 
+  const allAnimations = useMemo(() => animationsPath && animationsData 
     ? [...animations, ...animationsData.animations] 
-    : animations
+    : animations, [animations, animationsData, animationsPath])
     
   const { actions, mixer } = useAnimations(allAnimations, group)
   
@@ -163,8 +163,11 @@ export function GLBModelViewer({
         gl={{ alpha: true, antialias: true }}
       >
         <Suspense fallback={null}>
-          <ambientLight intensity={0.4} />
-          <directionalLight position={[5, 5, 5]} intensity={0.8} />
+          <ambientLight intensity={0.3} />
+          {/* Natural sunlight from top-left */}
+          <directionalLight position={[-5, 10, 5]} intensity={2} color="#fffcf5" />
+          {/* Subtle fill light */}
+          <directionalLight position={[5, 5, 5]} intensity={0.5} />
           {enableMouseLight && <MouseFollowLight />}
           
           <Model
