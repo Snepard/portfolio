@@ -42,13 +42,17 @@ export default function RotatingBorder({
           style={{
             background: `conic-gradient(
               from 0deg,
-              rgba(14, 165, 233, 0.9),
-              rgba(56, 189, 248, 0.9),
-              rgba(6, 182, 212, 0.9),
-              rgba(34, 211, 238, 0.9),
-              rgba(59, 130, 246, 0.9),
-              rgba(96, 165, 250, 0.9),
-              rgba(14, 165, 233, 0.9)
+              #fff 0deg,
+              #60a5fa 30deg,
+              #3b82f6 60deg,
+              #06b6d4 120deg,
+              #38bdf8 180deg,
+              #fff 210deg,
+              #60a5fa 240deg,
+              #3b82f6 270deg,
+              #06b6d4 300deg,
+              #38bdf8 330deg,
+              #fff 360deg
             )`,
             animationDuration: `${duration}s`,
             animationTimingFunction: "linear",
@@ -66,13 +70,17 @@ export default function RotatingBorder({
           style={{
             background: `conic-gradient(
               from 0deg,
-              rgba(14, 165, 233, 0.8),
-              rgba(56, 189, 248, 0.8),
-              rgba(6, 182, 212, 0.8),
-              rgba(34, 211, 238, 0.8),
-              rgba(59, 130, 246, 0.8),
-              rgba(96, 165, 250, 0.8),
-              rgba(14, 165, 233, 0.8)
+              rgba(255,255,255,0.7) 0deg,
+              rgba(96,165,250,0.5) 30deg,
+              rgba(59,130,246,0.5) 60deg,
+              rgba(6,182,212,0.5) 120deg,
+              rgba(56,189,248,0.5) 180deg,
+              rgba(255,255,255,0.4) 210deg,
+              rgba(96,165,250,0.4) 240deg,
+              rgba(59,130,246,0.4) 270deg,
+              rgba(6,182,212,0.4) 300deg,
+              rgba(56,189,248,0.4) 330deg,
+              rgba(255,255,255,0.3) 360deg
             )`,
             animationDuration: `${duration}s`,
             animationTimingFunction: "linear",

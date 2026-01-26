@@ -1,12 +1,12 @@
 "use client";
 
-import { useRef } from "react";
-import { Download, Github, Linkedin, Mail, ExternalLink } from "lucide-react";
+import { useRef, useState } from "react";
+import { Download, Github, Linkedin, Mail, ExternalLink, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 import { ParticleTextEffect } from "@/components/ui/particle-text-effect";
 import { GLBModelViewer } from "@/components/ui/glb-model-viewer";
 import { Spotlight } from "@/components/ui/spotlight";
 import RotatingBorder from "@/components/ui/rotating-border";
-import GradientText from "@/components/GradientText";
 
 const ROLES = [
   "Software Engineer",
@@ -16,6 +16,70 @@ const ROLES = [
   "Creative Technologist",
   "AI Enthusiast",
 ] as const;
+
+const TARGET_TEXT = "Download Resume";
+const CYCLES_PER_LETTER = 2;
+const SHUFFLE_TIME = 50;
+const CHARS = "!@#$%^&*():{};|,.<>/?";
+
+function ScrambleDownloadButton() {
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [text, setText] = useState(TARGET_TEXT);
+
+  const scramble = () => {
+    let pos = 0;
+
+    intervalRef.current = setInterval(() => {
+      const scrambled = TARGET_TEXT.split("")
+        .map((char, index) => {
+          if (pos / CYCLES_PER_LETTER > index) {
+            return char;
+          }
+
+          const randomCharIndex = Math.floor(Math.random() * CHARS.length);
+          const randomChar = CHARS[randomCharIndex];
+
+          return randomChar;
+        })
+        .join("");
+
+      setText(scrambled);
+      pos++;
+
+      if (pos >= TARGET_TEXT.length * CYCLES_PER_LETTER) {
+        stopScramble();
+      }
+    }, SHUFFLE_TIME);
+  };
+
+  const stopScramble = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = null;
+    setText(TARGET_TEXT);
+  };
+
+  return (
+    <motion.a
+      href="/resume.pdf"
+      download
+      whileHover={{ scale: 1.01 }}
+      whileTap={{ scale: 0.985 }}
+      onMouseEnter={scramble}
+      onMouseLeave={stopScramble}
+      className="group relative overflow-hidden inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-cyan-700/12 border border-cyan-500/30 text-white font-medium text-sm shadow-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 hover:border-white/80"
+      style={{ minWidth: `${TARGET_TEXT.length + 6}ch` }}
+    >
+      <div className="relative z-10 flex items-center gap-2">
+        <Download size={17} className="opacity-90" />
+        <span className="font-mono whitespace-nowrap">{text}</span>
+        <span className="text-cyan-100 text-xs font-normal ml-1">PDF</span>
+      </div>
+
+      {/* Hover fill: subtle border-color matched overlay (no scanner animation) */}
+      <span className="absolute inset-0 z-0 rounded-md bg-cyan-600/18 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+    </motion.a>
+  );
+}
 
 const HeroSection = () => {
   const roleAnchorRef = useRef<HTMLDivElement>(null);
@@ -71,16 +135,22 @@ const HeroSection = () => {
         <div className="space-y-8">
           <div className="space-y-0">
             <p className="text-2xl text-gray-300 font-light">Hey, I&apos;m</p>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight" style={{ fontFamily: "var(--font-arkhip), sans-serif" }}>
-              <GradientText
-                colors={["#BFDBFE",  "#93C5FD", "#60A5FA", "#4F8EF7", "#3B82F6", "#4F8EF7", "#60A5FA", "#93C5FD"]}
-                animationSpeed={3}
-                showBorder={false}
-                className=""
-              >
-                Aryan Singh
-              </GradientText>
-            </h1>
+            <div className="relative inline-block">
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 -z-10 rounded-2xl blur-2xl"
+                style={{
+                  background: "radial-gradient(circle at 50% 60%, rgba(255,255,255,0.7) 0%, rgba(59,130,246,0.35) 40%, rgba(59,130,246,0.12) 70%, transparent 100%)",
+                  width: "100%",
+                  height: "100%",
+                  left: 0,
+                  top: 0,
+                }}
+              />
+              <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight" style={{ fontFamily: "var(--font-arkhip), sans-serif" }}>
+                <span className="text-white">Aryan Singh</span>
+              </h1>
+            </div>
           </div>
 
           {/* Particle Role Text */}
@@ -98,16 +168,22 @@ const HeroSection = () => {
           </p>
 
           {/* Download Resume Button */}
-          <div className="pt-2">
-            <a 
-              href="/resume.pdf" 
-              download
-              className="group relative inline-flex items-center gap-3 px-6 py-3 rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 text-white font-semibold text-sm overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25 hover:scale-[1.02]"
+          <div className="pt-2 flex gap-4">
+            <ScrambleDownloadButton />
+            <a
+              href="#projects"
+              className="relative overflow-hidden inline-flex items-center gap-3 px-5 py-2.5 rounded-md bg-blue-600/14 border border-blue-500/40 text-white font-medium text-sm shadow-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400/30 hover:border-white/80 group"
             >
-              <span className="absolute inset-0 bg-linear-to-r from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <Download size={18} className="relative z-10" />
-              <span className="relative z-10">Download Resume</span>
-              <span className="relative z-10 text-cyan-200 text-xs font-normal">PDF</span>
+              {/* subtle hover fill */}
+              <span className="pointer-events-none absolute inset-0 rounded-md bg-blue-500/20 opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-400 ease-out" style={{ transitionProperty: 'opacity, transform' }} />
+
+              {/* Icon viewport */}
+              <div className="relative flex h-4 w-4 items-center justify-center overflow-hidden">
+                <span className="absolute h-2 w-2 rounded-full bg-white transition-all duration-300 ease-out group-hover:translate-x-full group-hover:opacity-0" />
+                <ArrowRight className="absolute h-full w-full -translate-x-full opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100" />
+              </div>
+
+              <span className="text-sm tracking-wide">View Projects</span>
             </a>
           </div>
 
