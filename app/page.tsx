@@ -367,6 +367,15 @@ const HeroSection = () => {
           </div>
         </RotatingBorder>
       </div>
+      {/* Scroll Down Animated Element */}
+      <div className="pointer-events-none select-none fixed left-1/2 bottom-8 z-30 flex flex-col items-center" style={{transform: 'translateX(-50%)'}}>
+        <div className="relative w-7 h-16 flex flex-col items-center justify-center">
+          <div className="chevron-anim absolute w-7 h-2 opacity-0" />
+          <div className="chevron-anim absolute w-7 h-2 opacity-0" />
+          <div className="chevron-anim absolute w-7 h-2 opacity-0" />
+        </div>
+        <span className="scroll-text block text-xs text-white/60 tracking-widest uppercase font-medium animate-scrollpulse">Know more</span>
+      </div>
     </div>
   );
 };
