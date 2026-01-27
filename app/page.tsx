@@ -85,13 +85,13 @@ const HeroSection = () => {
   const roleAnchorRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center relative overflow-hidden font-sans">
+    <div className="h-screen bg-[#050505] text-white flex items-center justify-center relative overflow-hidden font-sans">
       <Spotlight className="z-20" />
       
       {/* Fullscreen transparent particle canvas; text forms at role slot */}
       <ParticleTextEffect
-        words={ROLES}
         fullscreen
+        words={ROLES}
         anchorRef={roleAnchorRef}
         anchorPadding={16}
         fontSize={57}
@@ -99,7 +99,7 @@ const HeroSection = () => {
         interactive={false}
         backgroundMode="fadeToTransparent"
         fadeAlpha={0.12}
-        className="fixed inset-0 pointer-events-none z-0"
+        className="absolute inset-0 pointer-events-none z-0"
         canvasClassName="absolute inset-0"
         colors={[
           { r: 6, g: 182, b: 212 },   // cyan-500
@@ -368,7 +368,7 @@ const HeroSection = () => {
         </RotatingBorder>
       </div>
       {/* Scroll Down Animated Element */}
-      <div className="pointer-events-none select-none fixed left-1/2 bottom-8 z-30 flex flex-col items-center" style={{transform: 'translateX(-50%)'}}>
+      <div className="pointer-events-none select-none absolute left-1/2 bottom-8 z-30 flex flex-col items-center" style={{transform: 'translateX(-50%)'}}>
         <div className="relative w-7 h-16 flex flex-col items-center justify-center">
           <div className="chevron-anim absolute w-7 h-2 opacity-0" />
           <div className="chevron-anim absolute w-7 h-2 opacity-0" />
@@ -381,5 +381,17 @@ const HeroSection = () => {
 };
 
 export default function Home() {
-  return <HeroSection />;
+  return (
+    <>
+      <HeroSection />
+
+      {/* Example subsequent section so page can scroll and hero effects stop at viewport */}
+      <section id="projects" className="min-h-screen bg-white text-black flex items-center justify-center">
+        <div className="max-w-3xl px-6 py-20 text-center">
+          <h2 className="text-3xl font-bold mb-4">Projects</h2>
+          <p className="text-gray-600">Add your project sections here — hero effects stay inside the hero viewport.</p>
+        </div>
+      </section>
+    </>
+  );
 }
