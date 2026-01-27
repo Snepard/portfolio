@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Space_Grotesk } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import LenisProvider from "@/components/ui/lenis-provider";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -35,7 +36,7 @@ export default function RootLayout({
         className={`${spaceGrotesk.variable} ${geistMono.variable} ${arkhip.variable} antialiased font-sans`}
         style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
       >
-        {children}
+        <LenisProvider>{children}</LenisProvider>
       </body>
     </html>
   );
