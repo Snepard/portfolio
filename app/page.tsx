@@ -19,7 +19,7 @@ const ROLES = [
 
 const TARGET_TEXT = "Download Resume";
 const CYCLES_PER_LETTER = 2;
-const SHUFFLE_TIME = 50;
+const SHUFFLE_TIME = 30;
 const CHARS = "!@#$%^&*():{};|,.<>/?";
 
 function ScrambleDownloadButton() {
