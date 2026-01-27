@@ -150,6 +150,8 @@ interface ParticleTextEffectProps {
   anchorPadding?: number
   interactive?: boolean
   colors?: { r: number; g: number; b: number }[]
+  wordChangeIntervalMs?: number
+  paused?: boolean
 }
 
 const DEFAULT_WORDS = ["HELLO", "21st.dev", "ParticleTextEffect", "BY", "KAINXU"]
@@ -170,6 +172,8 @@ export function ParticleTextEffect({
   anchorPadding = 24,
   interactive = true,
   colors,
+  paused = false,
+  wordChangeIntervalMs = 4000,
 }: ParticleTextEffectProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationRef = useRef<number | null>(null)
@@ -177,6 +181,7 @@ export function ParticleTextEffect({
   const wordTracesRef = useRef<Record<string, { width: number; height: number; points: Vector2D[] }>>({})
   const frameCountRef = useRef(0)
   const wordIndexRef = useRef(0)
+  const lastWordChangeRef = useRef<number>(performance.now())
   const colorIndexRef = useRef(0)
   const mouseRef = useRef({ x: 0, y: 0, isPressed: false, isRightClick: false })
 
@@ -216,19 +221,21 @@ export function ParticleTextEffect({
   }
 
   const nextWord = (word: string, canvas: HTMLCanvasElement) => {
-    const anchorRect = fullscreen && anchorRef?.current ? anchorRef.current.getBoundingClientRect() : null
+    const anchorRect = anchorRef?.current ? anchorRef.current.getBoundingClientRect() : null
     let offsetX = 0
     let offsetY = 0
     let processWidth = canvas.width
     let processHeight = canvas.height
 
     if (anchorRect) {
+      // Use canvas/container rect so offsets are local to the hero and do not change on scroll
+      const containerRect = canvas.getBoundingClientRect()
       const paddedWidth = Math.max(1, Math.ceil(anchorRect.width + anchorPadding * 2))
       const paddedHeight = Math.max(1, Math.ceil(anchorRect.height + anchorPadding * 2))
       processWidth = paddedWidth
       processHeight = paddedHeight
-      offsetX = Math.round(anchorRect.left - anchorPadding)
-      offsetY = Math.round(anchorRect.top - anchorPadding)
+      offsetX = Math.round(anchorRect.left - containerRect.left - anchorPadding)
+      offsetY = Math.round(anchorRect.top - containerRect.top - anchorPadding)
     }
 
     let points: Vector2D[] = []
@@ -309,8 +316,9 @@ export function ParticleTextEffect({
         particle.pos.x = spawnPos.x
         particle.pos.y = spawnPos.y
 
-        particle.maxSpeed = Math.random() * 3 + 2
-        particle.maxForce = particle.maxSpeed * 0.03
+        // Increase default speed and steering force for snappier particle motion
+        particle.maxSpeed = Math.random() * 5 + 4
+        particle.maxForce = particle.maxSpeed * 0.06
         particle.particleSize = Math.random() * 6 + 6
         particle.colorBlendRate = Math.random() * 0.015 + 0.001
 
@@ -386,9 +394,10 @@ export function ParticleTextEffect({
       })
     }
 
-    // Auto-advance words
-    frameCountRef.current++
-    if (frameCountRef.current % 480 === 0) {
+    // Auto-advance words (time-based)
+    const now = performance.now()
+    if (words.length > 0 && now - lastWordChangeRef.current > wordChangeIntervalMs) {
+      lastWordChangeRef.current = now
       wordIndexRef.current = (wordIndexRef.current + 1) % words.length
       nextWord(words[wordIndexRef.current], canvas)
     }
@@ -411,9 +420,16 @@ export function ParticleTextEffect({
     wordIndexRef.current = 0
 
     const setCanvasSize = () => {
+      const parent = canvas.parentElement
       if (fullscreen) {
-        canvas.width = window.innerWidth
-        canvas.height = window.innerHeight
+        // Prefer sizing to the canvas container so coordinates remain local and static
+        if (parent) {
+          canvas.width = parent.clientWidth
+          canvas.height = parent.clientHeight
+        } else {
+          canvas.width = window.innerWidth
+          canvas.height = window.innerHeight
+        }
       } else {
         canvas.width = width
         canvas.height = height
@@ -427,8 +443,8 @@ export function ParticleTextEffect({
       nextWord(words[0], canvas)
     }
 
-    // Start animation
-    animate()
+    // Start animation unless paused
+    if (!paused) animate()
 
     // Mouse event handlers
     const handleMouseDown = (e: MouseEvent) => {
@@ -470,6 +486,14 @@ export function ParticleTextEffect({
       window.addEventListener("resize", handleResize)
     }
 
+    // React to paused prop changes by stopping/starting animation
+    if (paused) {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current)
+        animationRef.current = null
+      }
+    }
+
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
@@ -499,6 +523,7 @@ export function ParticleTextEffect({
     interactive,
     width,
     words,
+    paused,
   ])
 
   return (

@@ -181,6 +181,7 @@ interface GLBModelViewerProps {
   cameraFov?: number
   enableHeadTracking?: boolean
   headBoneName?: string
+  paused?: boolean
 }
 
 export function GLBModelViewer({
@@ -198,6 +199,7 @@ export function GLBModelViewer({
   cameraFov = 50,
   enableHeadTracking = false,
   headBoneName = "Head"
+  , paused = false
 }: GLBModelViewerProps) {
   return (
     <div className={className}>
@@ -205,6 +207,7 @@ export function GLBModelViewer({
         camera={{ position: cameraPosition, fov: cameraFov }}
         style={{ background: backgroundColor }}
         gl={{ alpha: true, antialias: true }}
+        frameloop={paused ? 'demand' : 'always'}
       >
         <Suspense fallback={null}>
           <ambientLight intensity={0.3} />

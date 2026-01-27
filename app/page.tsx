@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Download, Github, Linkedin, Mail, ExternalLink, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { ParticleTextEffect } from "@/components/ui/particle-text-effect";
@@ -83,9 +83,29 @@ function ScrambleDownloadButton() {
 
 const HeroSection = () => {
   const roleAnchorRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Pause heavy animations when the hero is scrolled out of view
+  useEffect(() => {
+    const el = heroRef.current
+    if (!el) return
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsPaused(entry.intersectionRatio < 0.01)
+        })
+      },
+      { threshold: [0, 0.01, 0.5, 1] }
+    )
+
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   return (
-    <div className="h-screen bg-[#050505] text-white flex items-center justify-center relative overflow-hidden font-sans">
+    <div ref={heroRef} className={`h-screen bg-[#050505] text-white flex items-center justify-center relative overflow-hidden font-sans ${isPaused ? 'paused' : ''}`}>
       <Spotlight className="z-20" />
       
       {/* Fullscreen transparent particle canvas; text forms at role slot */}
@@ -93,6 +113,8 @@ const HeroSection = () => {
         fullscreen
         words={ROLES}
         anchorRef={roleAnchorRef}
+        paused={isPaused}
+        wordChangeIntervalMs={3200}
         anchorPadding={16}
         fontSize={57}
         showCaption={false}
@@ -308,6 +330,7 @@ const HeroSection = () => {
                   cameraPosition={[0, 0.5, 3]}
                   cameraFov={35}
                   autoRotate={false}
+                  paused={isPaused}
                   enableOrbitControls={true}
                   enableMouseLight={true}
                   enableHeadTracking={true}

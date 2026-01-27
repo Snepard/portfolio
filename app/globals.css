@@ -124,6 +124,15 @@
   animation-delay: 2s;
 }
 
+/* Pause any running CSS animations inside a paused wrapper */
+.paused .animate-spin,
+.paused .animate-pulse,
+.paused .animate-scrollpulse,
+.paused .chevron-anim,
+.paused .animate-blob {
+  animation-play-state: paused !important;
+}
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
