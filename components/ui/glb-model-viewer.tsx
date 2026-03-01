@@ -4,6 +4,7 @@ import { Suspense, useRef, useEffect, useMemo } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useGLTF, useAnimations, OrbitControls, Environment } from '@react-three/drei'
 import * as THREE from 'three'
+import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js'
 
 interface ModelProps {
   modelPath: string
@@ -16,10 +17,10 @@ interface ModelProps {
   headBoneName?: string
 }
 
-function Model({ 
-  modelPath, 
-  animationsPath, 
-  scale = 1, 
+function Model({
+  modelPath,
+  animationsPath,
+  scale = 1,
   position = [0, 0, 0],
   rotation = [0, 0, 0],
   autoRotate = false,
@@ -28,21 +29,21 @@ function Model({
 }: ModelProps) {
   const group = useRef<THREE.Group>(null)
   const { scene, animations } = useGLTF(modelPath)
+  const modelScene = useMemo(() => clone(scene), [scene])
   const headBoneRef = useRef<THREE.Object3D | null>(null)
-  
-  // Load separate animations file if provided
-  const animationsData = animationsPath ? useGLTF(animationsPath) : null
-  
-  const allAnimations = useMemo(() => animationsPath && animationsData 
-    ? [...animations, ...animationsData.animations] 
+
+  const animationsData = useGLTF(animationsPath || modelPath)
+
+  const allAnimations = useMemo(() => animationsPath && animationsData
+    ? [...animations, ...animationsData.animations]
     : animations, [animations, animationsData, animationsPath])
-    
+
   const { actions, mixer } = useAnimations(allAnimations, group)
-  
+
   // Global mouse tracking for full-screen effect
   const mousePosition = useRef({ x: 0, y: 0 })
   const isMouseInWindow = useRef(true)
-  
+
   useEffect(() => {
     if (!enableHeadTracking) return
 
@@ -77,7 +78,7 @@ function Model({
     if (actionNames.length > 0 && actions[actionNames[0]]) {
       actions[actionNames[0]]?.reset().fadeIn(0.5).play()
     }
-    
+
     return () => {
       mixer?.stopAllAction()
     }
@@ -85,14 +86,14 @@ function Model({
 
   useEffect(() => {
     if (enableHeadTracking) {
-      const bone = scene.getObjectByName(headBoneName) || scene.getObjectByName("mixamorigHead") || scene.getObjectByName("Neck")
+      const bone = modelScene.getObjectByName(headBoneName) || modelScene.getObjectByName("mixamorigHead") || modelScene.getObjectByName("Neck")
       if (bone) {
         headBoneRef.current = bone
       } else {
         console.warn(`Bone "${headBoneName}" not found. Head tracking disabled.`)
       }
     }
-  }, [scene, enableHeadTracking, headBoneName])
+  }, [modelScene, enableHeadTracking, headBoneName])
 
   useFrame((state) => {
     if (autoRotate && group.current) {
@@ -111,7 +112,7 @@ function Model({
         // Target rotation (adjust sensitivity as needed)
         // Standard rigs often rotate head around Y for left/right and X for up/down
         // Note: Bones local axes might differ. Assuming standard orientation here.
-        
+
         targetRotationY = mouseX * 5 // Look left/right
         targetRotationX = -mouseY * 5 // Look up/down
       }
@@ -126,7 +127,7 @@ function Model({
 
   return (
     <group ref={group} position={position} rotation={rotation} scale={scale}>
-      <primitive object={scene} />
+      <primitive object={modelScene} />
     </group>
   )
 }
@@ -216,7 +217,7 @@ export function GLBModelViewer({
           {/* Subtle fill light */}
           <directionalLight position={[5, 5, 5]} intensity={0.5} />
           {enableMouseLight && <MouseFollowLight />}
-          
+
           <Model
             modelPath={modelPath}
             animationsPath={animationsPath}
@@ -227,9 +228,9 @@ export function GLBModelViewer({
             enableHeadTracking={enableHeadTracking}
             headBoneName={headBoneName}
           />
-          
+
           <Environment preset="city" />
-          
+
           {enableOrbitControls && <CameraInitializer />}
         </Suspense>
       </Canvas>

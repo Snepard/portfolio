@@ -34,7 +34,6 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${spaceGrotesk.variable} ${geistMono.variable} ${arkhip.variable} antialiased font-sans`}
-        style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
       >
         <LenisProvider>{children}</LenisProvider>
       </body>

@@ -1,0 +1,54 @@
+﻿
+> portfolio@0.1.0 lint
+> eslint
+
+
+D:\Code\Projects\portfolio\components\ui\glb-model-viewer.tsx
+   36:43  error    React Hook "useGLTF" is called conditionally. React Hooks must be called in the exact same order in every component render  react-hooks/rules-of-hooks
+   99:13  warning  'state' is defined but never used                                                                                           @typescript-eslint/no-unused-vars
+  151:27  error    Unexpected any. Specify a different type                                                                                    @typescript-eslint/no-explicit-any
+
+D:\Code\Projects\portfolio\components\ui\particle-text-effect.tsx
+  184:44  error    Error: Cannot call impure function during render
+
+`performance.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+D:\Code\Projects\portfolio\components\ui\particle-text-effect.tsx:184:44
+  182 |   const frameCountRef = useRef(0)
+  183 |   const wordIndexRef = useRef(0)
+> 184 |   const lastWordChangeRef = useRef<number>(performance.now())
+      |                                            ^^^^^^^^^^^^^^^^^ Cannot call impure function
+  185 |   const colorIndexRef = useRef(0)
+  186 |   const mouseRef = useRef({ x: 0, y: 0, isPressed: false, isRightClick: false })
+  187 |  react-hooks/purity
+  398:17  error    Error: Cannot call impure function during render
+
+`performance.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+D:\Code\Projects\portfolio\components\ui\particle-text-effect.tsx:398:17
+  396 |
+  397 |     // Auto-advance words (time-based)
+> 398 |     const now = performance.now()
+      |                 ^^^^^^^^^^^^^^^^^ Cannot call impure function
+  399 |     if (words.length > 0 && now - lastWordChangeRef.current > wordChangeIntervalMs) {
+  400 |       lastWordChangeRef.current = now
+  401 |       wordIndexRef.current = (wordIndexRef.current + 1) % words.length     react-hooks/purity
+  514:6   warning  React Hook useEffect has missing dependencies: 'animate' and 'nextWord'. Either include them or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          react-hooks/exhaustive-deps
+
+D:\Code\Projects\portfolio\components\ui\scroll-scene.tsx
+   50:43  error  React Hook "useGLTF" is called conditionally. React Hooks must be called in the exact same order in every component render                                                                                                                                                                                                                                                                                                                                                                                                            react-hooks/rules-of-hooks
+  176:5   error  Error: This value cannot be modified
+
+Modifying a value returned from a hook is not allowed. Consider moving the modification into the hook where the value is constructed.
+
+D:\Code\Projects\portfolio\components\ui\scroll-scene.tsx:176:5
+  174 |
+  175 |   useFrame(() => {
+> 176 |     camera.position.z = THREE.MathUtils.lerp(camera.position.z, scrollState.cameraZ, 0.1)
+      |     ^^^^^^^^^^^^^^^ `camera` cannot be modified
+  177 |     camera.position.y = baseCameraY
+  178 |     camera.position.x = 0
+  179 |   })  react-hooks/immutability
+
+Γ£û 8 problems (6 errors, 2 warnings)
+

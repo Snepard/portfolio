@@ -181,7 +181,7 @@ export function ParticleTextEffect({
   const wordTracesRef = useRef<Record<string, { width: number; height: number; points: Vector2D[] }>>({})
   const frameCountRef = useRef(0)
   const wordIndexRef = useRef(0)
-  const lastWordChangeRef = useRef<number>(performance.now())
+  const lastWordChangeRef = useRef<number>(0)
   const colorIndexRef = useRef(0)
   const mouseRef = useRef({ x: 0, y: 0, isPressed: false, isRightClick: false })
 
@@ -273,7 +273,7 @@ export function ParticleTextEffect({
 
       for (let i = coordsIndexes.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1))
-        ;[coordsIndexes[i], coordsIndexes[j]] = [coordsIndexes[j], coordsIndexes[i]]
+          ;[coordsIndexes[i], coordsIndexes[j]] = [coordsIndexes[j], coordsIndexes[i]]
       }
 
       for (const index of coordsIndexes) {
@@ -395,8 +395,9 @@ export function ParticleTextEffect({
     }
 
     // Auto-advance words (time-based)
-    const now = performance.now()
+    const now = Date.now()
     if (words.length > 0 && now - lastWordChangeRef.current > wordChangeIntervalMs) {
+      if (lastWordChangeRef.current === 0) lastWordChangeRef.current = now
       lastWordChangeRef.current = now
       wordIndexRef.current = (wordIndexRef.current + 1) % words.length
       nextWord(words[wordIndexRef.current], canvas)
