@@ -61,8 +61,8 @@ export default function PortfolioPage() {
             ease: "power2.out",
             scrollTrigger: {
               trigger: sections[1],
-              start: "top 75%", // Starts appearing right as video starts fading in
-              end: "top 25%",   // Finishes appearing as video is fully in
+              start: "top 100%", // Starts appearing right as video starts fading in
+              end: "top 50%",   // Finishes appearing as video is fully in
               scrub: true,
               snap: {
                 snapTo: 1, // snap to the end of this scrub timeline (which corresponds to section center if setup correctly)
@@ -84,8 +84,8 @@ export default function PortfolioPage() {
             ease: "power2.out",
             scrollTrigger: {
               trigger: sections[2],
-              start: "top 60%",
-              end: "top 20%",
+              start: "top 100%",
+              end: "top 50%",
               scrub: true,
               snap: {
                 snapTo: 1,
@@ -232,7 +232,7 @@ export default function PortfolioPage() {
         </section>
 
         {/* SPACER TO SHOW MORE FRAMES */}
-        <div className="h-[50vh] w-full pointer-events-none" />
+        <div className="h-[20vh] w-full pointer-events-none" />
 
         {/* SECTION 2: ABOUT ME - Content Left */}
         <section className="scroll-section min-h-screen w-full flex pointer-events-auto">
@@ -255,7 +255,7 @@ export default function PortfolioPage() {
         </section>
 
         {/* SPACER TO SHOW MORE FRAMES */}
-        <div className="h-[50vh] w-full pointer-events-none" />
+        <div className="w-full pointer-events-none" />
 
         {/* SECTION 3: TECH STACK - Content Right */}
         <section className="scroll-section min-h-screen w-full flex justify-end pointer-events-auto relative">

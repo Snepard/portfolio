@@ -67,6 +67,17 @@ export function ScrollVideo() {
             }
         };
 
+        const safePlay = (video: HTMLVideoElement | null) => {
+            if (video) {
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                        // Ignore the AbortError caused by GSAP quickly pausing during fast scrubbing
+                    });
+                }
+            }
+        };
+
         // Main scroll timeline
         const ctx = gsap.context(() => {
             // Hero Video Fade Out
@@ -79,8 +90,8 @@ export function ScrollVideo() {
                         start: "top top",
                         end: "top -50%", // Fade out faster
                         scrub: true,
-                        onEnter: () => heroVideoRef.current?.play(),
-                        onEnterBack: () => heroVideoRef.current?.play(),
+                        onEnter: () => safePlay(heroVideoRef.current),
+                        onEnterBack: () => safePlay(heroVideoRef.current),
                         onLeave: () => heroVideoRef.current?.pause(),
                         onLeaveBack: () => heroVideoRef.current?.pause(),
                     }
@@ -95,8 +106,8 @@ export function ScrollVideo() {
                         start: "top 75%",
                         end: "bottom 50%", // Start fading out earlier, creating an overlap with frames
                         scrub: true,
-                        onEnter: () => s2VideoRef.current?.play(),
-                        onEnterBack: () => s2VideoRef.current?.play(),
+                        onEnter: () => safePlay(s2VideoRef.current),
+                        onEnterBack: () => safePlay(s2VideoRef.current),
                         onLeave: () => s2VideoRef.current?.pause(),
                         onLeaveBack: () => s2VideoRef.current?.pause(),
                     }
@@ -115,8 +126,8 @@ export function ScrollVideo() {
                         start: "top 75%", // Delay the appearance
                         end: "bottom top",
                         scrub: true,
-                        onEnter: () => s3VideoRef.current?.play(),
-                        onEnterBack: () => s3VideoRef.current?.play(),
+                        onEnter: () => safePlay(s3VideoRef.current),
+                        onEnterBack: () => safePlay(s3VideoRef.current),
                         onLeave: () => s3VideoRef.current?.pause(),
                         onLeaveBack: () => s3VideoRef.current?.pause(),
                     }
@@ -168,8 +179,8 @@ export function ScrollVideo() {
                     ease: "none",
                     scrollTrigger: {
                         trigger: sections[1],
-                        start: "top 80%",
-                        end: "top 30%",
+                        start: "top 100%",
+                        end: "top 50%",
                         scrub: true,
                     },
                 });
