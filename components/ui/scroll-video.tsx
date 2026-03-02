@@ -10,6 +10,9 @@ export function ScrollVideo() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const overlayRef = useRef<HTMLDivElement>(null);
+    const heroVideoRef = useRef<HTMLVideoElement>(null);
+    const s2VideoRef = useRef<HTMLVideoElement>(null);
+    const s3VideoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -66,19 +69,97 @@ export function ScrollVideo() {
 
         // Main scroll timeline
         const ctx = gsap.context(() => {
+            // Hero Video Fade Out
+            if (heroVideoRef.current && sections[0]) {
+                gsap.to(heroVideoRef.current, {
+                    opacity: 0,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: sections[0],
+                        start: "top top",
+                        end: "top -50%", // Fade out faster
+                        scrub: true,
+                        onEnter: () => heroVideoRef.current?.play(),
+                        onEnterBack: () => heroVideoRef.current?.play(),
+                        onLeave: () => heroVideoRef.current?.pause(),
+                        onLeaveBack: () => heroVideoRef.current?.pause(),
+                    }
+                });
+            }
+
+            // Section 2 Background Video Timeline
+            if (s2VideoRef.current && sections[1]) {
+                const tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: sections[1],
+                        start: "top 75%",
+                        end: "bottom 50%", // Start fading out earlier, creating an overlap with frames
+                        scrub: true,
+                        onEnter: () => s2VideoRef.current?.play(),
+                        onEnterBack: () => s2VideoRef.current?.play(),
+                        onLeave: () => s2VideoRef.current?.pause(),
+                        onLeaveBack: () => s2VideoRef.current?.pause(),
+                    }
+                });
+
+                tl.fromTo(s2VideoRef.current, { opacity: 0 }, { opacity: 1, duration: 2, ease: "power1.inOut" })
+                    .to(s2VideoRef.current, { opacity: 1, duration: 6 })
+                    .to(s2VideoRef.current, { opacity: 0, duration: 2, ease: "power1.inOut" });
+            }
+
+            // Section 3 Background Video Timeline
+            if (s3VideoRef.current && sections[2]) {
+                const tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: sections[2],
+                        start: "top 75%", // Delay the appearance
+                        end: "bottom top",
+                        scrub: true,
+                        onEnter: () => s3VideoRef.current?.play(),
+                        onEnterBack: () => s3VideoRef.current?.play(),
+                        onLeave: () => s3VideoRef.current?.pause(),
+                        onLeaveBack: () => s3VideoRef.current?.pause(),
+                    }
+                });
+
+                tl.fromTo(s3VideoRef.current, { opacity: 0 }, { opacity: 1, duration: 2, ease: "power1.inOut" })
+                    .to(s3VideoRef.current, { opacity: 1, duration: 6 })
+                    .to(s3VideoRef.current, { opacity: 0, duration: 2, ease: "power1.inOut" });
+            }
+
+            // Frames Phase 1: Hero to Section 2 (ends at 112)
             gsap.to(airpods, {
-                frame: frameCount - 1,
-                snap: "frame", // Optional: snaps to integers so it doesn't try rendering fractional frames, though rounding handles it
+                frame: 112,
+                snap: "frame",
                 ease: "none",
                 scrollTrigger: {
-                    trigger: sections[0], // Start at Hero
-                    start: "top top",
-                    endTrigger: sections[2], // End at Tech Stack
-                    end: "bottom bottom",
-                    scrub: 1, // Smooth scrolling (tweak between 0.5 - 1.5 if needed)
+                    trigger: sections[0],
+                    start: "top -50%", // Start later
+                    endTrigger: sections[1],
+                    end: "top 25%", // Continue moving while S2 video fades in over it
+                    scrub: 1,
                 },
                 onUpdate: render,
             });
+
+            // Frames Phase 2: After Section 2 to Section 3 (starts at 113 to end)
+            gsap.fromTo(airpods,
+                { frame: 113 },
+                {
+                    frame: frameCount - 1,
+                    snap: "frame",
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: sections[1],
+                        start: "bottom 100%", // Start moving before S2 video fully disappears
+                        endTrigger: sections[2],
+                        end: "top 75%", // Ends exactly where S3 video stats fading in
+                        scrub: 1.5,
+                    },
+                    onUpdate: render,
+                    immediateRender: false,
+                }
+            );
 
             // Overlay Fade In when Section 2 (About Me) appears
             if (overlayRef.current && sections[1]) {
@@ -135,10 +216,39 @@ export function ScrollVideo() {
 
     return (
         <div ref={containerRef} className="w-full h-full relative">
-            <div ref={overlayRef} className="absolute inset-0 bg-slate-950/60 z-10 pointer-events-none opacity-0" />
+            <div ref={overlayRef} className="absolute inset-0 bg-slate-950/60 z-30 pointer-events-none opacity-0" />
+
+            <video
+                ref={heroVideoRef}
+                src="/herobg.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover z-20 pointer-events-none"
+            />
+
+            <video
+                ref={s2VideoRef}
+                src="/s2bg.mp4"
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover z-20 pointer-events-none opacity-0"
+            />
+
+            <video
+                ref={s3VideoRef}
+                src="/s3bg.mp4"
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover z-20 pointer-events-none opacity-0"
+            />
+
             <canvas
                 ref={canvasRef}
-                className="block w-full h-full object-cover relative z-0"
+                className="block w-full h-full object-cover relative z-10"
             />
         </div>
     );

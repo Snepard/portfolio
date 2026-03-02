@@ -4,10 +4,11 @@ import React, { useEffect, useRef } from "react";
 import { ArrowRight, Download } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { ScrollScene } from "@/components/ui/scroll-scene";
 import { ScrollVideo } from "@/components/ui/scroll-video";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 export default function PortfolioPage() {
   const heroTextRef = useRef<HTMLHeadingElement>(null);
@@ -60,8 +61,8 @@ export default function PortfolioPage() {
             ease: "power2.out",
             scrollTrigger: {
               trigger: sections[1],
-              start: "top 60%",
-              end: "top 20%",
+              start: "top 75%", // Starts appearing right as video starts fading in
+              end: "top 25%",   // Finishes appearing as video is fully in
               scrub: true,
               snap: {
                 snapTo: 1, // snap to the end of this scrub timeline (which corresponds to section center if setup correctly)
@@ -99,6 +100,85 @@ export default function PortfolioPage() {
     });
 
     return () => ctx.revert();
+  }, []);
+
+  // Auto-Scrolling Logic
+  useEffect(() => {
+    let isAnimating = false;
+    let currentStop = 0;
+    let stops: number[] = [];
+
+    const calculateStops = () => {
+      const vh = window.innerHeight;
+      // These match the exact narrative beats and layout spacing of our components
+      stops = [
+        0,         // 0: Top of Hero
+        vh * 1.0,  // 1: Hero fade complete, mid-animation
+        vh * 2.0,  // 2: Section 2 (About Me) perfectly centered
+        vh * 2.75, // 3: Mid-spacer, Phase 2 animation complete
+        vh * 3.5,  // 4: Section 3 (Tech Stack) perfectly centered
+        vh * 4.5   // 5: Normal HTML Content
+      ];
+    };
+
+    calculateStops();
+    window.addEventListener("resize", calculateStops);
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (isAnimating) return;
+
+      if (Math.abs(e.deltaY) < 15) return; // Ignore micro scrolling from trackpads/magic mice
+
+      const direction = e.deltaY > 0 ? 1 : -1;
+      goToStop(currentStop + direction);
+    };
+
+    let touchStartY = 0;
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      if (isAnimating) return;
+
+      const touchEndY = e.touches[0].clientY;
+      const deltaY = touchStartY - touchEndY;
+
+      if (Math.abs(deltaY) > 40) { // Threshold for a deliberate swipe
+        const direction = deltaY > 0 ? 1 : -1;
+        goToStop(currentStop + direction);
+      }
+    };
+
+    const goToStop = (nextStop: number) => {
+      if (nextStop >= 0 && nextStop < stops.length) {
+        isAnimating = true;
+        currentStop = nextStop;
+
+        gsap.to(window, {
+          scrollTo: stops[currentStop],
+          duration: 1.5,
+          ease: "power2.inOut",
+          onComplete: () => {
+            // Delay unlocking slightly to let trackpad momentum fully die
+            setTimeout(() => { isAnimating = false; }, 400);
+          }
+        });
+      }
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("touchstart", handleTouchStart, { passive: false });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+
+    return () => {
+      window.removeEventListener("resize", calculateStops);
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
   }, []);
 
   return (
@@ -151,6 +231,9 @@ export default function PortfolioPage() {
           </div>
         </section>
 
+        {/* SPACER TO SHOW MORE FRAMES */}
+        <div className="h-[50vh] w-full pointer-events-none" />
+
         {/* SECTION 2: ABOUT ME - Content Left */}
         <section className="scroll-section min-h-screen w-full flex pointer-events-auto">
           <div ref={section2Ref} className="w-full md:w-[60%] flex flex-col justify-center px-6 md:pl-24 py-20 opacity-0">
@@ -170,6 +253,9 @@ export default function PortfolioPage() {
             </div>
           </div>
         </section>
+
+        {/* SPACER TO SHOW MORE FRAMES */}
+        <div className="h-[50vh] w-full pointer-events-none" />
 
         {/* SECTION 3: TECH STACK - Content Right */}
         <section className="scroll-section min-h-screen w-full flex justify-end pointer-events-auto relative">
