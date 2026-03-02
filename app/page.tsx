@@ -5,6 +5,7 @@ import { ArrowRight, Download } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollScene } from "@/components/ui/scroll-scene";
+import { ScrollVideo } from "@/components/ui/scroll-video";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,12 +13,28 @@ export default function PortfolioPage() {
   const heroTextRef = useRef<HTMLHeadingElement>(null);
   const section2Ref = useRef<HTMLDivElement>(null);
   const section3Ref = useRef<HTMLDivElement>(null);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const sections = gsap.utils.toArray<HTMLElement>(".scroll-section");
     if (sections.length < 3) return;
 
     const ctx = gsap.context(() => {
+
+      // Hide Video after Section 3
+      if (videoContainerRef.current) {
+        gsap.to(videoContainerRef.current, {
+          yPercent: -100, // Scroll up with the page
+          ease: "none",
+          scrollTrigger: {
+            trigger: sections[2], // Start fading/moving out when leaving Section 3
+            start: "bottom bottom",
+            end: "bottom top",
+            scrub: true,
+          }
+        });
+      }
+
       // Phase 2: First Scroll (Hero to Section 2)
       // Animate text scale/opacity
       if (heroTextRef.current) {
@@ -87,8 +104,13 @@ export default function PortfolioPage() {
   return (
     <main className="relative bg-slate-950 text-slate-100 selection:bg-cyan-500/30 overflow-x-hidden">
 
+      {/* Background Video Layer (Fixed, behind everything) */}
+      <div ref={videoContainerRef} className="fixed inset-0 z-0 w-full h-full pointer-events-none overflow-hidden">
+        <ScrollVideo />
+      </div>
+
       {/* Background Text Layer (Fixed, behind the 3D character) */}
-      <div className="fixed inset-0 z-0 flex items-center justify-center pointer-events-none">
+      <div className="fixed inset-0 z-10 flex items-center justify-center pointer-events-none">
         <h1
           ref={heroTextRef}
           className="text-8xl md:text-[10rem] lg:text-[13rem] font-black tracking-tighter text-transparent bg-clip-text bg-linear-to-b from-white to-slate-500 leading-none select-none -translate-y-16"
@@ -99,7 +121,7 @@ export default function PortfolioPage() {
       </div>
 
       {/* 3D Global Canvas Layer (Fixed, in front of the background text) */}
-      <div className="fixed inset-0 z-10 pointer-events-none w-full h-full">
+      <div className="fixed inset-0 z-20 pointer-events-none w-full h-full">
         <ScrollScene
           modelPath="/models/Aryan.glb"
           animationsPath="/models/Animations.glb"
@@ -108,7 +130,7 @@ export default function PortfolioPage() {
       </div>
 
       {/* HTML Overlay Layer (Scrollable, passes pointers through to 3D where empty) */}
-      <div className="relative z-20 flex flex-col w-full pointer-events-none">
+      <div className="relative z-30 flex flex-col w-full pointer-events-none">
 
         {/* SECTION 1: HERO */}
         {/* We make it 150vh so user can scroll to scrub the timeline before the next section arrives fully */}
@@ -129,22 +151,18 @@ export default function PortfolioPage() {
           </div>
         </section>
 
-        {/* SECTION 2: TECH STACK - Content Left */}
+        {/* SECTION 2: ABOUT ME - Content Left */}
         <section className="scroll-section min-h-screen w-full flex pointer-events-auto">
           <div ref={section2Ref} className="w-full md:w-[60%] flex flex-col justify-center px-6 md:pl-24 py-20 opacity-0">
             <div className="space-y-8">
               <h2 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-6">
-                Tech <br />
-                <span className="text-cyan-400">Stack</span>
+                About <br />
+                <span className="text-cyan-400">Me</span>
               </h2>
 
-              <div className="grid grid-cols-2 gap-4 max-w-md">
-                {['React', 'Next.js', 'Three.js', 'GSAP', 'Node.js', 'Tailwind'].map((tech) => (
-                  <div key={tech} className="p-4 border border-slate-800 rounded-xl bg-slate-900/50 hover:border-cyan-500/50 transition-colors">
-                    <span className="font-mono text-slate-300">{tech}</span>
-                  </div>
-                ))}
-              </div>
+              <p className="text-lg text-slate-400 leading-relaxed max-w-md">
+                I am a passionate software engineer focused on building product-grade interfaces, immersive web experiences, and full-stack systems. I prioritize performance, motion, and visual storytelling in all my projects.
+              </p>
 
               <div className="mt-8 p-4 bg-slate-900 rounded-lg border-l-4 border-cyan-500 font-mono text-sm md:text-base text-slate-400 max-w-md">
                 <span className="text-purple-400">const</span> <span className="text-blue-400">role</span> = <span className="text-green-400">&quot;Creative Developer&quot;</span>;
@@ -153,23 +171,21 @@ export default function PortfolioPage() {
           </div>
         </section>
 
-        {/* SECTION 3: PROJECTS - Content Right */}
+        {/* SECTION 3: TECH STACK - Content Right */}
         <section className="scroll-section min-h-screen w-full flex justify-end pointer-events-auto relative">
           <div ref={section3Ref} className="w-full md:w-[60%] flex flex-col justify-center px-6 md:pr-24 py-20 text-right md:text-left opacity-0 z-10">
             <div className="space-y-6 max-w-xl md:ml-auto">
-              <h2 className="text-5xl md:text-7xl font-bold tracking-tight text-white">
-                Projects
+              <h2 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-6">
+                Tech <br className="hidden md:block" />
+                <span className="text-cyan-400">Stack</span>
               </h2>
 
-              <p className="text-lg text-slate-400 leading-relaxed">
-                Product-grade interfaces, immersive web experiences, and full-stack systems with a strong focus on
-                performance, motion, and visual storytelling.
-              </p>
-
-              <div className="pt-8 flex justify-end md:justify-start">
-                <button className="text-cyan-400 font-medium hover:text-cyan-300 underline underline-offset-4 decoration-2">
-                  Explore case studies
-                </button>
+              <div className="grid grid-cols-2 gap-4 max-w-md ml-auto md:ml-0">
+                {['React', 'Next.js', 'Three.js', 'GSAP', 'Node.js', 'Tailwind'].map((tech) => (
+                  <div key={tech} className="p-4 border border-slate-800 rounded-xl bg-slate-900/50 hover:border-cyan-500/50 transition-colors text-center md:text-left">
+                    <span className="font-mono text-slate-300">{tech}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

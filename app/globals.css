@@ -5,12 +5,20 @@
   height: 8px;
   width: 28px;
   opacity: 0;
-  transform: scale3d(0.5,0.5,0.5);
+  transform: scale3d(0.5, 0.5, 0.5);
   animation: scroll-move 2.1s ease-out infinite;
 }
-.chevron-anim:nth-child(2) { animation-delay: 0.7s; }
-.chevron-anim:nth-child(3) { animation-delay: 1.4s; }
-.chevron-anim:before, .chevron-anim:after {
+
+.chevron-anim:nth-child(2) {
+  animation-delay: 0.7s;
+}
+
+.chevron-anim:nth-child(3) {
+  animation-delay: 1.4s;
+}
+
+.chevron-anim:before,
+.chevron-anim:after {
   content: '';
   position: absolute;
   top: 0;
@@ -19,24 +27,53 @@
   background: #fff;
   border-radius: 2px;
 }
+
 .chevron-anim:before {
   left: 0;
   transform: skew(0deg, 30deg);
 }
+
 .chevron-anim:after {
   right: 0;
   width: 50%;
   transform: skew(0deg, -30deg);
 }
+
 @keyframes scroll-move {
-  25% { opacity: 1; }
-  33% { opacity: 1; transform: translateY(18px); }
-  67% { opacity: 1; transform: translateY(28px); }
-  100% { opacity: 0; transform: translateY(40px) scale3d(0.5,0.5,0.5); }
+  25% {
+    opacity: 1;
+  }
+
+  33% {
+    opacity: 1;
+    transform: translateY(18px);
+  }
+
+  67% {
+    opacity: 1;
+    transform: translateY(28px);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(40px) scale3d(0.5, 0.5, 0.5);
+  }
 }
-.scroll-text { opacity: 0.25; }
-.animate-scrollpulse { animation: scroll-pulse 2s linear alternate infinite; }
-@keyframes scroll-pulse { to { opacity: 1; } }
+
+.scroll-text {
+  opacity: 0.25;
+}
+
+.animate-scrollpulse {
+  animation: scroll-pulse 2s linear alternate infinite;
+}
+
+@keyframes scroll-pulse {
+  to {
+    opacity: 1;
+  }
+}
+
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
@@ -88,28 +125,36 @@
   0% {
     transform: translate(0px, 0px) scale(1);
   }
+
   33% {
     transform: translate(30px, -20px) scale(1.05);
   }
+
   66% {
     transform: translate(-20px, 20px) scale(0.95);
   }
+
   100% {
     transform: translate(0px, 0px) scale(1);
   }
 }
 
 @keyframes scan {
-  0%, 100% {
+
+  0%,
+  100% {
     top: 0%;
     opacity: 0;
   }
+
   10% {
     opacity: 1;
   }
+
   90% {
     opacity: 1;
   }
+
   100% {
     top: 100%;
     opacity: 0;
@@ -206,6 +251,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
