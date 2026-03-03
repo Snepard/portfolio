@@ -89,11 +89,7 @@ export function ScrollVideo() {
                         trigger: sections[0],
                         start: "top top",
                         end: "top -50%", // Fade out faster
-                        scrub: true,
-                        onEnter: () => safePlay(heroVideoRef.current),
-                        onEnterBack: () => safePlay(heroVideoRef.current),
-                        onLeave: () => heroVideoRef.current?.pause(),
-                        onLeaveBack: () => heroVideoRef.current?.pause(),
+                        scrub: true
                     }
                 });
             }

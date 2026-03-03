@@ -248,8 +248,34 @@ export function ScrollScene({ modelPath, animationsPath, className }: ScrollScen
       ease: 'power2.inOut'
     }, 0)
 
-    // Phase 4: Final State is maintained automatically, no further ScrollTriggers needed.
-
+    // Phase 4: Third Scroll (Section 3 sticky phase -> Section 4 Overlay)
+    // Character rotates to face left and exits the screen
+    if (sections[2]) {
+      const tl3 = gsap.timeline({
+        scrollTrigger: {
+          trigger: sections[2], // Section 3 (h-[200vh])
+          start: 'top top',     // Starts when it pins
+          end: 'bottom bottom', // Ends when it unpins
+          scrub: 1,
+          snap: {
+            snapTo: 1,
+            duration: { min: 0.5, max: 1.5 },
+            delay: 0.1,
+            ease: 'power1.inOut'
+          }
+        },
+      })
+      tl3.to(scrollState, {
+        charRotY: Math.PI / 2 + Math.PI, // spins to face left
+        ease: 'power1.inOut',
+        duration: 0.4
+      }, 0)
+      tl3.to(scrollState, {
+        charX: -6.0, // exit off screen to the left
+        ease: 'power2.in',
+        duration: 1.0
+      }, 0)
+    }
   }, [])
 
   useEffect(() => {

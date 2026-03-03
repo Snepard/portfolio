@@ -14,6 +14,7 @@ export default function PortfolioPage() {
   const heroTextRef = useRef<HTMLHeadingElement>(null);
   const section2Ref = useRef<HTMLDivElement>(null);
   const section3Ref = useRef<HTMLDivElement>(null);
+  const section4Ref = useRef<HTMLDivElement>(null);
   const videoContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -85,7 +86,7 @@ export default function PortfolioPage() {
             scrollTrigger: {
               trigger: sections[2],
               start: "top 100%",
-              end: "top 50%",
+              end: "top 20%",
               scrub: true,
               snap: {
                 snapTo: 1,
@@ -97,12 +98,33 @@ export default function PortfolioPage() {
           }
         );
       }
+
+      // Section 4 UI Entry (Fade in perfectly over Section 3)
+      if (section4Ref.current) {
+        gsap.to(section4Ref.current, {
+          opacity: 1,
+          pointerEvents: "auto",
+          ease: "power2.inOut",
+          scrollTrigger: {
+            trigger: sections[2], // Use Section 3
+            start: "top 0%",      // Start when Section 3 hits the top
+            end: "bottom 100%",   // End when Section 3 hits the bottom (100vh later)
+            scrub: true,
+            snap: {
+              snapTo: 1,
+              duration: { min: 0.5, max: 1.5 },
+              delay: 0.1,
+              ease: "power1.inOut"
+            }
+          }
+        });
+      }
     });
 
     return () => ctx.revert();
   }, []);
 
-  // Auto-Scrolling Logic
+  // Auto-Scrolling Logic - Only 3 static locations
   useEffect(() => {
     let isAnimating = false;
     let currentStop = 0;
@@ -110,14 +132,11 @@ export default function PortfolioPage() {
 
     const calculateStops = () => {
       const vh = window.innerHeight;
-      // These match the exact narrative beats and layout spacing of our components
       stops = [
         0,         // 0: Top of Hero
-        vh * 1.0,  // 1: Hero fade complete, mid-animation
-        vh * 2.0,  // 2: Section 2 (About Me) perfectly centered
-        vh * 2.75, // 3: Mid-spacer, Phase 2 animation complete
-        vh * 3.5,  // 4: Section 3 (Tech Stack) perfectly centered
-        vh * 4.5   // 5: Normal HTML Content
+        vh * 1.7,  // 1: Section 2 (About Me) perfectly centered
+        vh * 2.7,  // 2: Section 3 (Tech Stack) perfectly at top
+        vh * 3.7   // 3: Section 4 (Contact / Final View)
       ];
     };
 
@@ -169,15 +188,21 @@ export default function PortfolioPage() {
       }
     };
 
+    // Add { passive: false } to allow e.preventDefault()
     window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("touchstart", handleTouchStart, { passive: false });
     window.addEventListener("touchmove", handleTouchMove, { passive: false });
+
+    // Ensure we start at 0 and avoid browser restoring scroll mid-way
+    window.history.scrollRestoration = "manual";
+    window.scrollTo(0, 0);
 
     return () => {
       window.removeEventListener("resize", calculateStops);
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
+      window.history.scrollRestoration = "auto";
     };
   }, []);
 
@@ -258,34 +283,41 @@ export default function PortfolioPage() {
         <div className="w-full pointer-events-none" />
 
         {/* SECTION 3: TECH STACK - Content Right */}
-        <section className="scroll-section min-h-screen w-full flex justify-end pointer-events-auto relative">
-          <div ref={section3Ref} className="w-full md:w-[60%] flex flex-col justify-center px-6 md:pr-24 py-20 text-right md:text-left opacity-0 z-10">
-            <div className="space-y-6 max-w-xl md:ml-auto">
-              <h2 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-6">
-                Tech <br className="hidden md:block" />
-                <span className="text-cyan-400">Stack</span>
-              </h2>
+        <section className="scroll-section h-[200vh] w-full relative pointer-events-auto">
+          <div className="sticky top-0 h-screen w-full flex justify-end">
+            <div ref={section3Ref} className="w-full md:w-[60%] flex flex-col justify-center px-6 md:pr-24 py-20 text-right md:text-left opacity-0 z-10">
+              <div className="space-y-6 max-w-xl md:ml-auto">
+                <h2 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-6">
+                  Tech <br className="hidden md:block" />
+                  <span className="text-cyan-400">Stack</span>
+                </h2>
 
-              <div className="grid grid-cols-2 gap-4 max-w-md ml-auto md:ml-0">
-                {['React', 'Next.js', 'Three.js', 'GSAP', 'Node.js', 'Tailwind'].map((tech) => (
-                  <div key={tech} className="p-4 border border-slate-800 rounded-xl bg-slate-900/50 hover:border-cyan-500/50 transition-colors text-center md:text-left">
-                    <span className="font-mono text-slate-300">{tech}</span>
-                  </div>
-                ))}
+                <div className="grid grid-cols-2 gap-4 max-w-md ml-auto md:ml-0">
+                  {['React', 'Next.js', 'Three.js', 'GSAP', 'Node.js', 'Tailwind'].map((tech) => (
+                    <div key={tech} className="p-4 border border-slate-800 rounded-xl bg-slate-900/50 hover:border-cyan-500/50 transition-colors text-center md:text-left">
+                      <span className="font-mono text-slate-300">{tech}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 4: NORMAL SCROLLING */}
-        <section className="min-h-screen w-full bg-slate-950 flex flex-col items-center justify-center p-12 text-center border-t border-slate-900 pointer-events-auto">
-          <h3 className="text-3xl font-bold mb-4">Normal HTML Content</h3>
-          <p className="text-slate-400 max-w-2xl">
-            By this point, the 3D model scroll timeline has completed.
-            The character remains in its final state on the left.
-            Further scrolling simply moves the page normally.
-          </p>
-        </section>
+        {/* SECTION 4: FINAL OVERLAY (Fixed, fades in nicely over everything) */}
+        <div ref={section4Ref} className="fixed inset-0 z-40 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-12 text-center pointer-events-none opacity-0">
+          <div className="max-w-2xl mx-auto space-y-8">
+            <h3 className="text-5xl font-bold text-white tracking-tight">
+              Ready to <span className="text-cyan-400">Collaborate?</span>
+            </h3>
+            <p className="text-xl text-slate-400">
+              I'm currently available for freelance work and open to new opportunities. Let's build something amazing together.
+            </p>
+            <button className="px-10 py-4 bg-cyan-500 text-slate-950 font-bold rounded-full hover:bg-cyan-400 transition-colors text-lg inline-flex items-center gap-2">
+              Get In Touch <ArrowRight size={20} />
+            </button>
+          </div>
+        </div>
 
       </div>
     </main>
